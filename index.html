@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Take Her Out</title>
+<title>Our Night Out</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -167,8 +167,8 @@ td.d { text-align: right; font-family: var(--f-data); }
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>Take her out</h1>
-    <p>The smallest testable slice of the EverAI case's lead initiative: shopping and gifting rebuilt as a date inside the chat. Variant A is today, as seen on 21 Oct 2026: asked to go shopping and then out on a yacht with a good bottle of wine, she loves the idea and offers nothing; the member gives from the gift shelf (27 emoji gifts, 5–999 tokens) or leaves for the Candy Shop. Variant B is the date: shopping first, she proposes three things at real prices, you pay in place and she wears it; then she proposes the evening, a rare bottle or sunset on the yacht, or staying in for free. Characters, pictures and payments are placeholders; gifts, outfits and prices are Candy's, 21 Oct.</p>
+    <h1>Our night out</h1>
+    <p>The smallest testable slice of the EverAI case's lead initiative: shopping and gifting rebuilt as a night out inside the chat. Variant A is today, as seen on 21 Oct 2026: asked to go shopping and then out on a yacht with a good bottle of wine, she loves the idea and offers nothing; the member gives from the gift shelf (27 emoji gifts, 5–999 tokens) or leaves for the Candy Shop. Variant B is the night out: shopping first, she proposes three things at real prices, you pay in place and she wears it; then she proposes the evening, a rare bottle or sunset on the yacht, or staying in for free. Characters, pictures and payments are placeholders; gifts, outfits and prices are Candy's, 21 Oct.</p>
   </header>
 
   <div class="grid">
@@ -204,11 +204,11 @@ td.d { text-align: right; font-family: var(--f-data); }
       </section>
 
       <section class="card">
-        <h2>3 · Solution: the date, against today</h2>
+        <h2>3 · Solution: the night out, against today</h2>
         <div class="row">
           <div class="seg" role="group" aria-label="Variant">
             <button id="vA" aria-pressed="false">A · today</button>
-            <button id="vB" aria-pressed="true">B · the date</button>
+            <button id="vB" aria-pressed="true">B · our night out</button>
           </div>
           <button class="ghostbtn" id="reset">Reset member</button>
         </div>
@@ -309,7 +309,7 @@ td.d { text-align: right; font-family: var(--f-data); }
   const pictureHTML = (label, id) => `<div class="pic" style="${swatch(id || 'improv')}"><div class="lbl">${label}</div></div>`;
 
   function renderStatus() {
-    const names = { 4: 'Playful', 5: 'Teasing', 6: 'Dating', 7: 'Close', 8: 'In love' };
+    const names = { 4: 'Playful', 5: 'Teasing', 6: 'Close', 7: 'In love', 8: 'Devoted' };
     $('status').textContent = `${names[her.level] || 'In love'} · level ${her.level}`;
     $('bal').textContent = fmt(member.balance);
   }
@@ -356,8 +356,8 @@ td.d { text-align: right; font-family: var(--f-data); }
     if ($('cPic')) $('cPic').onclick = askPicture;
     if ($('cWear')) $('cWear').onclick = askWear;
     if ($('cNext')) $('cNext').onclick = askNext;
-    if ($('cAgain')) $('cAgain').onclick = () => { tap(); log('next_evening_accepted', 'repeat intent'); msgs.push({ k: 'me', t: 'Yes, next time' }, { k: 'her', t: "it's a date. I'll remind you 😘" }); phase = 'done'; renderChat(); done('the date, and a next one planned'); };
-    if ($('cLater')) $('cLater').onclick = () => { tap(); log('next_evening_declined'); msgs.push({ k: 'me', t: 'Maybe later' }, { k: 'her', t: 'no rush. tonight was perfect' }); phase = 'done'; renderChat(); done('the date'); };
+    if ($('cAgain')) $('cAgain').onclick = () => { tap(); log('next_evening_accepted', 'repeat intent'); msgs.push({ k: 'me', t: 'Yes, next time' }, { k: 'her', t: "it's a plan. I'll remind you 😘" }); phase = 'done'; renderChat(); done('a night out, and the next one planned'); };
+    if ($('cLater')) $('cLater').onclick = () => { tap(); log('next_evening_declined'); msgs.push({ k: 'me', t: 'Maybe later' }, { k: 'her', t: 'no rush. tonight was perfect' }); phase = 'done'; renderChat(); done('a night out'); };
     if ($('cGift')) $('cGift').onclick = () => { begin(); tap(); log('gift_shelf_opened'); giftShelf(); };
   }
   function go(s) { screen = s; $('overlay').innerHTML = ''; if (s === 'chat') renderChat(); if (s === 'shop') renderShop(); if (s === 'item') renderItem(); if (s === 'store') renderStore(); renderStatus(); if (s !== 'chat') renderComposer(); }
@@ -573,7 +573,7 @@ td.d { text-align: right; font-family: var(--f-data); }
   }
   function renderCompare() {
     const cell = (v, label) => { const x = last[v]; return `<div><span class="muted">${label}</span><b>${x ? x.spent + ' tokens' : '–'}</b>${x ? `${x.taps} taps · ${x.route}` : 'not run yet'}</div>`; };
-    $('compare').innerHTML = cell('A', 'A · today, this session') + cell('B', 'B · the date, this session');
+    $('compare').innerHTML = cell('A', 'A · today, this session') + cell('B', 'B · our night out, this session');
     simulate();
   }
   function renderRules() {
@@ -602,7 +602,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
   function setVariant(v) {
     variant = v; $('vA').setAttribute('aria-pressed', v === 'A'); $('vB').setAttribute('aria-pressed', v === 'B');
-    resetAll(false); log('variant_set', v === 'A' ? 'today' : 'the date');
+    resetAll(false); log('variant_set', v === 'A' ? 'today' : 'our night out');
   }
   function resetAll(withLog = true) {
     member = start(); her = { owned: [], wearing: null, level: 4 }; counting = false; finished = false; taps = 0; spent = 0; chosen = null; offer = null; evening = null; phase = 'idle'; route = '';
@@ -670,7 +670,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     const sesA = last.A ? `${last.A.spent} tokens` : 'run A', sesB = last.B ? `${last.B.spent} tokens` : 'run B';
     const ok = (c) => c ? '<span class="good">holds</span>' : '<span class="warn">fails</span>';
     const srow = (l, a, b, v) => `<tr><td>${l}</td><td class="n">${a}</td><td class="n">${b}</td><td>${v}</td></tr>`;
-    $('abTable').innerHTML = `<thead><tr><th>Assumed result, 14 days</th><th class="n">A · today</th><th class="n">B · the date</th><th>Against the bar</th></tr></thead><tbody>` +
+    $('abTable').innerHTML = `<thead><tr><th>Assumed result, 14 days</th><th class="n">A · today</th><th class="n">B · our night out</th><th>Against the bar</th></tr></thead><tbody>` +
       srow('Bought something', fmt(A.buyers), fmt(B.buyers), '') +
       srow('Went on to an evening', '–', fmt(evBuyers), '') +
       srow('Went out again', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}%)`, `${ok(repeat >= 0.15)} · bar 15%`) +

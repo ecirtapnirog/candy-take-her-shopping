@@ -1,6 +1,6 @@
-# Take her out: prototype
+# Our night out: prototype
 
-The smallest testable slice of the lead initiative in the EverAI case: gifting and the Candy Shop rebuilt as a date inside the chat. Shopping is the opening act; the evening is the payoff. If she proposes both, at real prices, do members spend more in a session, and do they come back for another evening?
+The smallest testable slice of the lead initiative in the EverAI case: gifting and the Candy Shop rebuilt as a night out inside the chat. Shopping is the opening act; the evening is the payoff. If she proposes both, at real prices, do members spend more in a session, and do they come back for another evening?
 
 - **A (today, as seen on 21 Oct 2026 on a character the member created):** asked to go shopping and then out on a yacht with a good bottle of wine, she answers "you really know how to sweep a girl away" and offers nothing. A picture costs 2 tokens and is not on a yacht. The member gives from the gift shelf (27 emoji gifts, 5–999 tokens; a Horse Riding Day at 110 came back as a 15-second video and a photo) or leaves for the Candy Shop. Asked "what should we do next?", she proposes nothing.
 - **B (the test):** shopping first: she offers three real gifts or outfits, priced around what this member usually spends; the member pays in place and she wears it. Then she proposes the evening: "A rare bottle, just us" (320) or "Sunset on the yacht" (999, the shelf's yacht price), leading with the one that fits this member's usual session, and always offering to stay in for free. The evening comes with her video, photos and a voice note, is saved to her profile, and ends with her suggesting the next one.
