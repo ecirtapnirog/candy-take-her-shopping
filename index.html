@@ -235,7 +235,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
       <section class="card">
         <h2>4 · What the test reads</h2>
-        <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50 (up to about 9,850 a side), 14 days. Each row is something that must be true for B to be worth building.</p>
+        <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50 (up to about 9,850 a side), 14 days. Three questions, and what would stop it.</p>
         <div class="tablewrap"><table id="asTable"></table></div>
         <details style="margin-top:10px"><summary>Rehearse the readout with assumed numbers</summary>
           <p class="small" style="margin:8px 0">Not a result: made-up inputs, to show how the real test would be read. Change them to see the decision move.</p>
@@ -254,7 +254,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
       <section class="card">
         <h2>5 · Decision</h2>
-        <p class="small" style="margin:0"><b>Go to Premium</b> if tokens per member rise by 10 or more a fortnight with the interval above zero, 15% or more of evening-goers go out again within 14 days, other spending and pack revenue do not drop, and disputes and sessions with three or more top-ups do not rise. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
+        <p class="small" style="margin:0"><b>Go to Premium</b> if questions 2 and 3 hold and nothing in "Stop if" trips. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
         <p class="small" style="margin:8px 0 0"><b>What it is worth.</b> At the bar, about $0.5M a year on Premium Plus, the bottom of the brief's range. The target is about $1M: one heavy payer in five going out once a month at ~$50. More evenings, ordinary payers and brand partners come after, sized only once this reads.</p>
       </section>
 
@@ -672,27 +672,24 @@ td.d { text-align: right; font-family: var(--f-data); }
     const srow = (l, a, b, v) => `<tr><td>${l}</td><td class="n">${a}</td><td class="n">${b}</td><td>${v}</td></tr>`;
     $('abTable').innerHTML = `<thead><tr><th>Assumed result, 14 days</th><th class="n">A · today</th><th class="n">B · our night out</th><th>Against the bar</th></tr></thead><tbody>` +
       srow('Bought something', fmt(A.buyers), fmt(B.buyers), '') +
-      srow('Went on to an evening', '–', fmt(evBuyers), '') +
-      srow('Went out again', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}%)`, `${ok(repeat >= 0.15)} · bar 15%`) +
-      srow('<b>Tokens per member (main)</b>', A.mt.toFixed(1), B.mt.toFixed(1), `${ok(loAbs > 0 && diff >= BAR)} · +${diff.toFixed(1)} (${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}), bar +10`) +
+      srow('1 · Went on to an evening', '–', fmt(evBuyers), '') +
+      srow('2 · Went out again', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}%)`, `${ok(repeat >= 0.15)} · bar 15%`) +
+      srow('<b>3 · Tokens per member</b>', A.mt.toFixed(1), B.mt.toFixed(1), `${ok(loAbs > 0 && diff >= BAR)} · +${diff.toFixed(1)} (${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}), bar +10`) +
       srow('A session on the phone (your runs)', sesA, sesB, '') + '</tbody>';
     $('inference').innerHTML = `<b>Reading it.</b> In B, ${(B.rate * 100).toFixed(1)}% bought in the opening act against ${(A.rate * 100).toFixed(1)}% buying from the shelf or Shop in A; ${fmt(evBuyers)} went on to an evening and ${fmt(B.again)} went out again. Tokens per member: <b>+${diff.toFixed(1)} a fortnight</b> (interval ${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}), on a small base of ${A.mt.toFixed(1)}, so read it in tokens, not percent; most of the gain is the evenings (${fmt(B.eveTok)} tokens) rather than the items. The repeat row is the one that matters for the money beyond the test: a single evening is a novelty, a second one is a habit. The "new money" row can only be read in the real test.`;
 
     $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
     $('decision').innerHTML = pass
-      ? `<b class="good">With these numbers: go</b>, if the new-money and guardrail rows hold in the real test. B adds ${diff.toFixed(1)} tokens per member a fortnight, about ${usdM(yearly)} a year across Premium Plus.`
+      ? `<b class="good">With these numbers: go</b>, if the rest of question 3 and the stop line hold in the real test. B adds ${diff.toFixed(1)} tokens per member a fortnight, about ${usdM(yearly)} a year across Premium Plus.`
       : (loAbs <= 0 ? `<b class="warn">Hold.</b> The interval reaches zero: the test cannot tell B from A.` : (repeat < 0.15 ? `<b class="warn">Hold.</b> Spend rose, but too few came back for a second evening: it reads as a novelty, not a habit.` : `<b class="warn">Hold.</b> B beats A, but by less than the bar of 10 tokens a member a fortnight.`));
   }
   ['sA', 'kA', 'sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
-  $('asTable').innerHTML = `<thead><tr><th>Must be true</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
-    [['<b>Desirable</b> · members go out with her after shopping', 'Share of opening-act buyers who go on to an evening', 'Up'],
-     ['<b>Viable</b> · they spend more', '<b>Tokens per member on gifts, outfits and evenings, 14 days (main)</b>', '+10 a fortnight (≈$0.5M a year)'],
-     ['<b>Viable</b> · they come back', '<b>Share of evening-goers who go out again within 14 days (main)</b>', '15%'],
-     ['<b>Viable</b> · it is new money', 'Tokens on everything else per member; pack revenue per member, 30 days', 'No drop'],
-     ['<b>Usable</b> · the session carries on', 'Tokens and taps in one session; sessions that end after the first purchase', 'Fewer dead ends'],
-     ['<b>Feasible</b> · an evening pays for itself', 'Generation cost per evening (a video, photos, a voice note)', 'Under a third of its price'],
-     ['<b>Ethical</b> · nobody feels pushed', 'Disputes and tickets about charges; sessions with three or more top-ups; share who stay in', 'No rise']]
-      .map(([m, k, b]) => `<tr><td>${m}</td><td>${k}</td><td>${b}</td></tr>`).join('') + '</tbody>';
+  $('asTable').innerHTML = `<thead><tr><th>Question</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
+    [['1 · Do they go?', 'Share of opening-act buyers who go on to an evening', 'Up'],
+     ['<b>2 · Do they come back?</b>', '<b>Share of evening-goers who go out again within 14 days</b>', '<b>15% or more</b>'],
+     ['<b>3 · Is it new money?</b>', '<b>Tokens per member on gifts, outfits and evenings, 14 days</b>; tokens on everything else; pack revenue per member, 30 days', '<b>+10 a fortnight</b> (≈$0.5M a year); no drop; no drop'],
+     ['Stop if', 'Card disputes and tickets about charges; sessions with three or more top-ups; generation cost per evening', 'Any rise; any rise; over a third of its price']]
+      .map(([q, m, b]) => `<tr><td>${q}</td><td>${m}</td><td>${b}</td></tr>`).join('') + '</tbody>';
 
   resetAll(false);
 })();
