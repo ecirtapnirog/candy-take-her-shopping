@@ -57,7 +57,7 @@ It follows the discovery structure, top to bottom:
    - the new-money row, read only in the real test, is what proves the outcome.
    
    Lower B's share to 17% to show the decision turn to Hold.
-5. **2:30–2:50 — Decision (section 5).** Go if the new-money row holds: about $3M a year on the baseline. The numbers are simulated; this shows how the decision would be read.
+5. **2:30–2:55 — Decision (section 5), and the path.** Go if the new-money row holds: about $3M a year on the baseline. The numbers are simulated; this shows how the decision would be read. Close: "The test is small on purpose; if it reads, this is the path": the trip together, gifts that open scenes, her wardrobe everywhere.
 
 ## How AI was used to build it
 
