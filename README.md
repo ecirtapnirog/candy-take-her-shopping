@@ -18,7 +18,7 @@ It follows the discovery structure, top to bottom:
 1. **Outcome: grow token spending.** The baseline lines from the main document (payers, spend per payer, heavy payers, token packs, value of a token). There is no public figure for what members spend on gifts today, so the initiative is sized on what it would take: an evening averages about 500 tokens ($50), and $1M a year is about 1,670 evenings a month, one heavy payer in five going out once a month.
 2. **Opportunity.** "I want to take her somewhere, not send her an emoji." The 21 Oct session: the story works, the experience gift already turns into a video, and nothing comes next.
 3. **Solution.** A against B on the phone, with taps and tokens counted for the whole session. Then the three rules: her three picks, the evening, and the top-up sized on the session.
-4. **Assumptions, and what the test reads.** One row per assumption:
+4. **What the test reads.** One row per thing that must be true, with its measure and its bar:
    - **Desirable:** share of opening-act buyers who go on to an evening (up).
    - **Viable:** tokens per member on gifts, outfits and evenings over 14 days (the main measure; the bar is +10 tokens a member a fortnight, about $0.5M a year on Premium Plus).
    - **Viable, repeat:** share of evening-goers who go out again within 14 days (bar 15%).
@@ -27,8 +27,8 @@ It follows the discovery structure, top to bottom:
    - **Feasible:** generation cost per evening.
    - **Ethical:** disputes, sessions with three or more top-ups, and the share who choose to stay in.
 
-   Rows marked "simulated" come from stated assumptions. The rest can only be read in the real test.
-5. **Decision, and what it is worth** on Premium Plus.
+   Under it, "Rehearse the readout with assumed numbers" shows how a result would be read, with made-up inputs you can change.
+5. **Decision.** The go and hold rule in plain words, and what it is worth: about $0.5M at the bar, $1M at the target.
 
 ## Files
 
@@ -46,8 +46,8 @@ It follows the discovery structure, top to bottom:
 1. **0:00–0:20 — Outcome and opportunity (sections 1–2).** The goal is token spending. On my account this afternoon I asked my character to go shopping, then out on a yacht with a good bottle of wine. She loved it and offered nothing. A 110-token gift came back as a video of her riding by the water and a photo at sunset, so the media is there. Asked what next, she proposed nothing.
 2. **0:20–0:50 — A.** The same moment, today: her reply, a 2-token picture, then the gift shelf, 27 emoji, the yacht at 999. "What should we do next?": nothing. Note the session: about 110 tokens and a dead end.
 3. **0:50–1:35 — B.** Same member. Shopping first: three picks around what this member spends; buy one in place, she wears it. Then the evening: her pick, the wine or the yacht, and staying in free. Take the yacht: the video, the photos, her voice, saved to her profile, and "Paris next time?". Lower the balance: the top-up covers the evening and nothing more, because it is dearer than a usual session.
-4. **1:35–2:15 — What the test reads (section 4).** Tokens per member up about 19 a fortnight against a bar of 10; one evening-goer in five goes out again, which is the row that matters: one evening is a novelty, two is a habit. Drop the repeat share to 10% to show the decision turn to Hold. New money and the guardrails can only be read in the real test.
-5. **2:15–2:40 — Decision and the path.** On Premium Plus that is about $1M a year: one heavy payer in five going out once a month. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
+4. **1:35–2:15 — What the test reads (section 4).** Two main measures: tokens per member, bar +10 a fortnight, and the share who go out again, bar 15%, because one evening is a novelty and two is a habit. Open the rehearsal: with assumed numbers, +19 tokens and one in five going out again reads as go; drop the repeat share to 10% and it turns to Hold. New money and the guardrails can only be read in the real test.
+5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year; the target is about $1M, one heavy payer in five going out once a month. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
 
 ## How AI was used to build it
 
