@@ -29,6 +29,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 header.top h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
 header.top p { margin: 0; color: var(--muted); max-width: 72ch; }
 .grid { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 28px; margin-top: 20px; align-items: start; }
+@media (min-width: 861px) { .phone { position: sticky; top: 16px; } }
 @media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } .phone { margin: 0 auto; } }
 
 /* phone */
@@ -117,6 +118,14 @@ td.n, th.n { text-align: right; font-family: var(--f-data); font-variant-numeric
 .kpi span { font-size: 12px; color: var(--muted); }
 .good { color: var(--good); } .warn { color: var(--warn); }
 details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+.lead { font-size: 15px; font-weight: 600; margin: 0 0 8px; line-height: 1.35; }
+.finding { background: var(--bg); border-left: 3px solid var(--accent); border-radius: 6px; padding: 8px 10px; font-size: 13px; margin: 6px 0 8px; }
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.compare div { border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 12.5px; }
+.compare b { display: block; font-size: 18px; font-family: var(--f-data); font-weight: 500; }
+.decision { border-radius: 10px; padding: 10px 12px; font-size: 13px; margin-top: 8px; border: 1px solid var(--line); }
+.decision b { font-size: 15px; }
+td.d { text-align: right; font-family: var(--f-data); }
 .ghostbtn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
 </style>
 </head>
@@ -143,7 +152,14 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
 
     <div class="console">
       <section class="card">
-        <h2>Variant</h2>
+        <h2>1 · The question</h2>
+        <p class="lead">Does a shopping scene in the chat get members to spend more tokens on outfits than the Shop alone?</p>
+        <p class="small" style="margin:0 0 6px"><b>Why ask.</b> 15% of members have bought from the Shop since it opened, 7% three times. Yet asked to go shopping, the characters offer nothing to buy: the member has to leave the story, find the Shop, buy, gift, come back and ask.</p>
+        <p class="small" style="margin:0"><b>What it sits on.</b> On the case's illustrative baseline the Shop sells about <b>$3.0M a year</b>: 116,000 subscribers × ~2.4 outfits a year × ~108 tokens × $0.10. <b>The bar:</b> +20% tokens spent on outfits per member over 14 days, worth about $0.6M a year at full rollout.</p>
+      </section>
+
+      <section class="card">
+        <h2>2 · Try both paths</h2>
         <div class="row">
           <div class="seg" role="group" aria-label="Variant">
             <button id="vA" aria-pressed="false">A · today: the Shop</button>
@@ -151,49 +167,49 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
           </div>
           <button class="ghostbtn" id="reset">Reset member</button>
         </div>
-        <p class="muted small" style="margin:10px 0 0" id="tapNote">Tap "Let's go shopping" in the phone. Taps are counted from that message to her wearing the outfit.</p>
+        <p class="small" style="margin:10px 0 8px" id="tapNote">Tap "Let's go shopping" in the phone. Taps are counted from that message to her wearing the outfit.</p>
+        <div class="compare" id="compare"></div>
+        <details style="margin-top:10px"><summary>The member on screen</summary>
+          <div class="row" style="margin-top:8px">
+            <div class="field"><label for="inBal">Balance <output id="oBal"></output></label><input id="inBal" type="range" min="0" max="300" step="1" value="60"></div>
+            <div class="field"><label for="inPace">Tokens a day, last 7 days <output id="oPace"></output></label><input id="inPace" type="range" min="0" max="300" step="5" value="85"></div>
+            <div class="field"><label for="inTyp">Usual price per outfit <output id="oTyp"></output></label><input id="inTyp" type="range" min="0" max="189" step="1" value="0"></div>
+          </div>
+          <p class="muted small" style="margin:8px 0 0">Lower the balance and pick a dear outfit in B to see the top-up open inside the scene.</p>
+        </details>
       </section>
 
       <section class="card">
-        <h2>Member</h2>
-        <div class="row">
-          <div class="field"><label for="inBal">Balance <output id="oBal"></output></label><input id="inBal" type="range" min="0" max="300" step="1" value="60"></div>
-          <div class="field"><label for="inPace">Tokens a day, last 7 days <output id="oPace"></output></label><input id="inPace" type="range" min="0" max="300" step="5" value="85"></div>
-          <div class="field"><label for="inTyp">Usual price per outfit <output id="oTyp"></output></label><input id="inTyp" type="range" min="0" max="189" step="1" value="0"></div>
-        </div>
-        <p class="muted small" style="margin:10px 0 0">Usual price 0 means the member has never bought an outfit; she then anchors on the catalogue median.</p>
+        <h2>3 · What B offers, and why it matters</h2>
+        <p class="small" style="margin:0 0 4px"><b>Her three picks.</b> The model writes her lines; a rule decides what she may offer, so every offer is a real outfit at its real price.</p>
+        <p class="finding" id="pickFinding"></p>
+        <details><summary>The rule for every kind of member</summary><div class="tablewrap" style="margin-top:6px"><table id="pickTable"></table></div></details>
+        <p class="small" style="margin:14px 0 4px"><b>The top-up inside the scene.</b> The AI-led prototype's rule, reused: the smallest pack that covers the outfit plus three days at the member's pace, with the cheapest that covers it always shown.</p>
+        <p class="finding" id="topFinding"></p>
+        <details><summary>The rule on four outfits, for this member</summary><div class="tablewrap" style="margin-top:6px"><table id="topTable"></table></div></details>
       </section>
 
       <section class="card">
-        <h2>Her three picks, live</h2>
-        <p class="small" style="margin:0 0 8px">One outfit at the member's usual price, one a step up, and always the cheapest she doesn't own. The model writes her lines; this rule decides what she may offer, so every offer is a real item at its real price.</p>
-        <div class="tablewrap"><table id="pickTable"></table></div>
-      </section>
-
-      <section class="card">
-        <h2>Top-up inside the scene</h2>
-        <p class="small" style="margin:0 0 8px">Reused unchanged from the AI-led prototype: the smallest pack covering the outfit plus 3 days at the member's pace; 350 (no bonus) becomes 550 (+10%) if the member spends 550 within a week; the cheapest covering pack is always shown.</p>
-        <div class="tablewrap"><table id="topTable"></table></div>
+        <h2>4 · The readout: A against B</h2>
+        <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50: 9,850 a side, 14 days. The members are simulated from the assumptions at the bottom, so this shows how the decision would be read, not a result.</p>
+        <div class="tablewrap"><table id="abTable"></table></div>
+        <p class="finding" id="inference"></p>
+        <div class="decision" id="decision"></div>
+        <p class="small" id="worth" style="margin:10px 0 0"></p>
+        <details style="margin-top:10px" open><summary>Assumptions — change them to stress-test the decision</summary>
+          <div class="row" style="margin-top:8px">
+            <div class="field"><label for="sA">A: share who buy an outfit in 14 days</label><input id="sA" type="number" min="0" max="1" step="0.01" value="0.07"></div>
+            <div class="field"><label for="kA">A: outfits per buyer</label><input id="kA" type="number" min="1" max="6" step="0.1" value="1.3"></div>
+            <div class="field"><label for="sB">B: share who buy an outfit in 14 days</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.10"></div>
+            <div class="field"><label for="kB">B: outfits per buyer</label><input id="kB" type="number" min="1" max="6" step="0.05" value="1.4"></div>
+          </div>
+          <p class="muted small" style="margin:8px 0 0">A = 7% × 1.3 ≈ 0.09 outfits per member per fortnight ≈ 2.4 a year: the floor read from the Achievements page (15% bought one, 7% three), the same rate the $3.0M uses. B = 10% × 1.4: the base case in the case document, about +40% in tokens. In A members buy any catalogue outfit (average 108 tokens); in B they take the cheapest pick 30% of the time, the usual 50%, the step up 20%. Tokens at $0.10. Not simulated, and watched as guardrails in the real test: pack revenue per member over 30 days, refunds and disputes, generation cost per session.</p>
+        </details>
       </section>
 
       <section class="card">
         <h2>Events this session</h2>
         <div class="log" id="log"><div class="muted">Nothing yet.</div></div>
-      </section>
-
-      <section class="card">
-        <h2>What the readout will look like</h2>
-        <p class="small" style="margin:0 0 10px">Premium Plus members who open a chat during the test, split 50/50: about 9,850 a side (17% of ~116,000 payers). Synthetic members with assumed behaviour, over 14 days. The main measure is tokens spent on outfits, the brief's metric; outfit count is watched beside it. It shows how the decision is read, not a result.</p>
-        <div class="row" style="margin-bottom:10px">
-          <div class="field"><label for="sA">A: share who buy an outfit</label><input id="sA" type="number" min="0" max="1" step="0.01" value="0.07"></div>
-          <div class="field"><label for="sB">B: share who buy an outfit</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.10"></div>
-          <div class="field"><label for="kA">A: outfits per buyer</label><input id="kA" type="number" min="1" max="6" step="0.1" value="1.3"></div>
-          <div class="field"><label for="kB">B: outfits per buyer</label><input id="kB" type="number" min="1" max="6" step="0.05" value="1.4"></div>
-        </div>
-        <div class="kpis" id="kpis"></div>
-        <details style="margin-top:10px"><summary>Assumptions behind the simulation</summary>
-          <p class="small muted">Calibrated to Part 1. A: 7% of members buy an outfit in two weeks at 1.3 each, about 2.4 outfits a year, the floor read from the Achievements page (15% bought one, 7% three since launch). B: 10% at 1.4 each, which comes out near +40% in tokens, Part 1's base case, because her picks shift some buying to the cheapest outfit. Outfits per buyer are 1 plus a Poisson draw. Prices in A are any catalogue item (average 108 tokens); in B the cheapest pick is taken 30% of the time, the usual 50%, the step up 20%, anchored on a usual price drawn from the catalogue. Tokens are valued at $0.10. Rollout value assumes all ~116,000 subscribers behave like the Premium Plus test group. The guardrails (pack revenue per member over 30 days, refunds and disputes, generation cost per session) need real data.</p>
-        </details>
       </section>
     </div>
   </div>
@@ -206,7 +222,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
   const { PACKS, delivered, pricePerToken, recommend } = window.TopUp;
   const { CATALOGUE, pickOutfits } = window.Shopping;
   const $ = (id) => document.getElementById(id);
-  const gbp = (n) => '£' + n.toFixed(2);
+  const gbp = (n) => '$' + n.toFixed(2);
   const fmt = (n) => n.toLocaleString('en-GB');
 
   const start = () => ({ balance: 60, pace: 85, typical: 0 });
@@ -215,7 +231,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
   let variant = 'B';
   let screen = 'chat';
   let msgs = [];
-  let taps = 0, counting = false, chosen = null, offer = null;
+  let taps = 0, counting = false, finished = false, chosen = null, offer = null;
+  const lastTaps = { A: null, B: null };
 
   const events = [];
   function log(name, detail) {
@@ -255,7 +272,7 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
   function renderComposer() {
     const chips = [];
     if (screen === 'chat') {
-      if (!counting) chips.push(`<button class="chip hot" id="cShop">Let's go shopping, pick me an outfit</button>`);
+      if (!counting && !finished) chips.push(`<button class="chip hot" id="cShop">Let's go shopping, pick me an outfit</button>`);
       if (variant === 'A' && chosen && her.owned.includes(chosen.id) && her.wearing !== chosen.id) chips.push(`<button class="chip hot" id="cWear">Ask her to wear it</button>`);
     }
     $('composer').innerHTML = chips.join('') + `<div class="input">Write a message…</div>`;
@@ -308,8 +325,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
     msgs.push({ k: 'sys', t: `You got Ava the ${chosen.name}` }, { k: 'her', t: 'give me a second…' }, { k: 'pic', t: `Wearing the ${chosen.name} · placeholder`, id: chosen.id }, { k: 'her', t: 'you have good taste. what do you think?' });
     her.level++; msgs.push({ k: 'lvl', t: `Relationship level ${her.level - 1} → ${her.level}` });
     log('item_worn', `${taps} taps from asking to wearing`); log('level_up', `${her.level - 1} → ${her.level}`);
-    counting = false; syncInputs(); go('chat');
-    $('tapNote').textContent = `Done in ${taps} taps. Reset, or switch variant to compare.`;
+    counting = false; finished = true; lastTaps.B = taps; syncInputs(); go('chat');
+    $('tapNote').textContent = `Done in ${taps} taps. Switch to A to compare, or reset to run B again.`; renderCompare();
   }
 
   // ---------- variant A: today's Shop path ----------
@@ -340,8 +357,8 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
   }
   function askWear() {
     tap(); msgs.push({ k: 'me', t: 'Put it on for me' }, { k: 'her', t: "I'm wearing it now" }, { k: 'pic', t: `Wearing the ${chosen.name} · placeholder`, id: chosen.id });
-    her.wearing = chosen.id; log('item_worn', `${taps} taps from asking to wearing`); counting = false; renderChat();
-    $('tapNote').textContent = `Done in ${taps} taps. Reset, or switch variant to compare.`;
+    her.wearing = chosen.id; log('item_worn', `${taps} taps from asking to wearing`); counting = false; finished = true; lastTaps.A = taps; renderChat();
+    $('tapNote').textContent = `Done in ${taps} taps. Switch to B to compare, or reset to run A again.`; renderCompare();
   }
   function renderStore() {
     $('screen').innerHTML = `<div class="row" style="justify-content:space-between"><button class="linkbtn" id="back">‹ Item</button><span class="label">Token store</span></div>
@@ -394,26 +411,41 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
     $('inTyp').value = member.typical; $('oTyp').textContent = member.typical ? member.typical : 'never bought';
     renderTables();
   }
+  function renderCompare() {
+    const cell = (v, label) => `<div><span class="muted">${label}</span><b>${lastTaps[v] == null ? '–' : lastTaps[v] + ' taps'}</b>${lastTaps[v] == null ? 'not run yet' : 'from asking to wearing'}</div>`;
+    $('compare').innerHTML = cell('A', 'A · today: the Shop') + cell('B', 'B · the scene');
+  }
   function renderTables() {
+    const avg = CATALOGUE.reduce((x, c) => x + c.tokens, 0) / CATALOGUE.length;
+    const mine = pickOutfits({ owned: her.owned, typicalPrice: member.typical });
+    const offAvg = mine.picks.reduce((x, p) => x + p.tokens, 0) / mine.picks.length;
+    const who = member.typical ? `a member who usually pays ${member.typical} tokens` : 'a member who has never bought an outfit';
+    $('pickFinding').innerHTML = `For ${who}, she offers ${mine.picks.map(p => `${p.name} (${p.tokens})`).join(', ')}. The three average <b>${Math.round(offAvg)} tokens</b>, against ~${Math.floor(avg)} for the whole catalogue, and the cheapest is always one of them. <b>So what:</b> B can sell more outfits at a lower price each, so counting outfits would flatter B. The test counts tokens spent on outfits.`;
     const cases = [['This member', member.typical], ['Never bought', 0], ['Budget buyer', 60], ['Regular', 89], ['Big spender', 140], ['Top of the range', 189]];
-    $('pickTable').innerHTML = `<thead><tr><th>Case</th><th class="n">Usual</th><th>Cheapest</th><th>Usual</th><th>Step up</th></tr></thead><tbody>` + cases.map(([n, t]) => {
+    $('pickTable').innerHTML = `<thead><tr><th>Member</th><th class="n">Usual</th><th>Cheapest</th><th>Usual</th><th>Step up</th><th class="n">Average</th></tr></thead><tbody>` + cases.map(([n, t]) => {
       const r = pickOutfits({ owned: n === 'This member' ? her.owned : [], typicalPrice: t });
       const by = (role) => { const p = r.picks.find(x => r.roles && r.roles[x.id] === role); return p ? `${p.name} <span class="muted">${p.tokens}</span>` : '–'; };
-      return `<tr><td>${n}</td><td class="n">${t || '–'}</td><td>${by('cheapest')}</td><td>${by('usual')}</td><td>${by('step up')}</td></tr>`;
+      const a = Math.round(r.picks.reduce((x, p) => x + p.tokens, 0) / r.picks.length);
+      return `<tr><td>${n}</td><td class="n">${t || '–'}</td><td>${by('cheapest')}</td><td>${by('usual')}</td><td>${by('step up')}</td><td class="n">${a}</td></tr>`;
     }).join('') + '</tbody>';
-    $('topTable').innerHTML = `<thead><tr><th>Outfit</th><th class="n">Cost</th><th class="n">Balance</th><th class="n">A day</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Covers it</th></tr></thead><tbody>` +
+    const dear = mine.picks[mine.picks.length - 1];
+    const r = recommend({ cost: dear.tokens, balance: member.balance, dailyPace: member.pace });
+    $('topFinding').innerHTML = r
+      ? `This member has ${member.balance} tokens and spends about ${member.pace} a day. Picking the ${dear.name} (${dear.tokens}), she is ${r.shortfall} short: the sheet recommends <b>${fmt(delivered(r.pick))} tokens for ${gbp(r.pick.price)}</b>${r.pick.bonus ? ` (+${Math.round(r.pick.bonus * 100)}% bonus)` : ''}, shows ${fmt(delivered(r.cheapestCovering))} as the cheapest that covers it, and leaves ${fmt(r.leftAfter)} tokens for the next days. <b>So what:</b> in A the same moment sends her to the store and back; in B the purchase completes inside the story. The extra pack revenue is real money, but it can also be money she would have spent anyway next week, which is why pack revenue per member over 30 days is a guardrail.`
+      : `This member has ${member.balance} tokens: enough for every outfit she offers, so no top-up opens. Lower the balance under "The member on screen" to see it.`;
+    $('topTable').innerHTML = `<thead><tr><th>Outfit</th><th class="n">Cost</th><th class="n">Short by</th><th class="n">Recommended</th><th class="n">Price</th><th class="n">Cheapest that covers</th><th class="n">Left after</th></tr></thead><tbody>` +
       [CATALOGUE[0], CATALOGUE[5], CATALOGUE[11], CATALOGUE[14]].map(c => {
-        const r = recommend({ cost: c.tokens, balance: member.balance, dailyPace: member.pace });
-        return r ? `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n">${member.balance}</td><td class="n">${member.pace}</td><td class="n"><b>${fmt(delivered(r.pick))}</b></td><td class="n">${gbp(r.pick.price)}</td><td class="n">${fmt(delivered(r.cheapestCovering))}</td></tr>`
-                 : `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n">${member.balance}</td><td class="n">${member.pace}</td><td class="n" colspan="3">Enough tokens, no sheet</td></tr>`;
+        const q = recommend({ cost: c.tokens, balance: member.balance, dailyPace: member.pace });
+        return q ? `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n">${q.shortfall}</td><td class="n"><b>${fmt(delivered(q.pick))}</b></td><td class="n">${gbp(q.pick.price)}</td><td class="n">${fmt(delivered(q.cheapestCovering))}</td><td class="n">${fmt(q.leftAfter)}</td></tr>`
+                 : `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n" colspan="5">Enough tokens, no sheet</td></tr>`;
       }).join('') + '</tbody>';
   }
   function setVariant(v) {
     variant = v; $('vA').setAttribute('aria-pressed', v === 'A'); $('vB').setAttribute('aria-pressed', v === 'B');
-    resetAll(false); log('variant_set', v === 'A' ? 'today: the Shop' : 'the scene in chat');
+    resetAll(false); renderCompare(); log('variant_set', v === 'A' ? 'today: the Shop' : 'the scene in chat');
   }
   function resetAll(withLog = true) {
-    member = start(); her = { owned: [], wearing: null, level: 4 }; counting = false; taps = 0; chosen = null; offer = null;
+    member = start(); her = { owned: [], wearing: null, level: 4 }; counting = false; finished = false; taps = 0; chosen = null; offer = null;
     msgs = [{ k: 'her', t: 'hey you. missed me?' }];
     $('tapNote').textContent = 'Tap "Let\'s go shopping" in the phone. Taps are counted from that message to her wearing the outfit.';
     syncInputs(); go('chat'); if (withLog) log('member_reset');
@@ -456,26 +488,36 @@ details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
       const mean = (a) => a.reduce((x, y) => x + y, 0) / n;
       const vari = (a, m) => a.reduce((x, y) => x + (y - m) ** 2, 0) / (n - 1);
       const mi = mean(items), mt = mean(toks);
-      return { mi, vi: vari(items, mi), mt, vt: vari(toks, mt), rate: buyers / n };
+      return { mi, vi: vari(items, mi), mt, vt: vari(toks, mt), rate: buyers / n, buyers, outfits: items.reduce((x, y) => x + y, 0), tok: toks.reduce((x, y) => x + y, 0) };
     };
     const A = arm(false), B = arm(true);
     const diff = B.mt - A.mt, se = Math.sqrt(A.vt / n + B.vt / n);
     const lift = diff / A.mt, lo = (diff - 1.96 * se) / A.mt, hi = (diff + 1.96 * se) / A.mt;
+    const mde = (1.96 + 0.84) * Math.sqrt(2 * A.vt / n) / A.mt;
     const pass = lo > 0 && lift >= 0.20;
+    const pct = (x) => `${x >= 0 ? '+' : ''}${(x * 100).toFixed(0)}%`;
     const avgPrice = CATALOGUE.reduce((x, c) => x + c.tokens, 0) / CATALOGUE.length;
     const shopToday = (+$('sA').value) * (+$('kA').value) * avgPrice * PERIODS * SUBS * TOKEN_USD;
-    $('kpis').innerHTML = `
-      <div class="kpi"><b>${A.mt.toFixed(1)} → ${B.mt.toFixed(1)}</b><span>Tokens on outfits per member, 14 days (main measure)</span></div>
-      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${lift >= 0 ? '+' : ''}${(lift * 100).toFixed(0)}%</b><span>Lift, 95% interval ${(lo * 100).toFixed(0)}% to ${(hi * 100).toFixed(0)}%</span></div>
-      <div class="kpi"><b>${A.mi.toFixed(3)} → ${B.mi.toFixed(3)}</b><span>Outfits per member (also watched)</span></div>
-      <div class="kpi"><b>${(A.rate * 100).toFixed(1)}% → ${(B.rate * 100).toFixed(1)}%</b><span>Share who buy at least one</span></div>
-      <div class="kpi"><b>${usd(shopToday)}</b><span>Shop today at A's inputs, per year, ~116,000 subscribers (Part 1: ~$3.0M)</span></div>
-      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${usd(Math.max(0, lift) * shopToday)}</b><span>Value at full rollout, per year = lift × Shop today (Part 1: $0.6M at +20%, $1.2M at +40%)</span></div>
-      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${pass ? 'Go' : 'Hold'}</b><span>Rule: +20% tokens on outfits per member, interval above zero; guardrails checked separately</span></div>`;
+    const row = (label, a, b, d, bold) => `<tr${bold ? ' style="font-weight:600"' : ''}><td>${label}</td><td class="n">${a}</td><td class="n">${b}</td><td class="d">${d}</td></tr>`;
+    const outfitLift = (B.mi - A.mi) / A.mi, priceA = A.mt / A.mi, priceB = B.mt / B.mi;
+    $('abTable').innerHTML = `<thead><tr><th></th><th class="n">A · today</th><th class="n">B · scene</th><th class="n">B against A</th></tr></thead><tbody>` +
+      row('Members', fmt(n), fmt(n), '') +
+      row('Bought at least one outfit', `${fmt(A.buyers)} (${(A.rate * 100).toFixed(1)}%)`, `${fmt(B.buyers)} (${(B.rate * 100).toFixed(1)}%)`, pct(B.rate / A.rate - 1)) +
+      row('Outfits bought', fmt(A.outfits), fmt(B.outfits), pct(outfitLift)) +
+      row('Average price of an outfit bought', `${priceA.toFixed(0)} tokens`, `${priceB.toFixed(0)} tokens`, pct(priceB / priceA - 1)) +
+      row('Tokens spent on outfits', fmt(Math.round(A.tok)), fmt(Math.round(B.tok)), pct(B.tok / A.tok - 1)) +
+      row('Tokens on outfits per member (main measure)', A.mt.toFixed(1), B.mt.toFixed(1), pct(lift), true) + '</tbody>';
+    $('inference').innerHTML = `B's members spent <b>${B.mt.toFixed(1)}</b> tokens each on outfits, against ${A.mt.toFixed(1)} in A: <b>${pct(lift)}</b>, with a 95% interval of ${pct(lo)} to ${pct(hi)}. More of them bought (${(A.rate * 100).toFixed(1)}% → ${(B.rate * 100).toFixed(1)}%), and outfits rose ${pct(outfitLift)}, but the average outfit cost ${Math.abs(Math.round((priceB / priceA - 1) * 100))}% ${priceB < priceA ? 'less' : 'more'} because the cheapest pick is always offered, so tokens rose less than outfits. With 9,850 a side, the smallest lift this test can reliably detect is about <b>${pct(mde)}</b> (80% power), so the +20% bar ${mde <= 0.2 ? 'is within reach of the sample' : 'is below what the sample can detect: the test needs more members or more time'}.`;
+    $('decision').className = 'decision';
+    $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
+    $('decision').innerHTML = pass
+      ? `<b class="good">Go.</b> The lift beats the +20% bar and its interval stays above zero. Next, check the guardrails, then extend to Premium.`
+      : (lo <= 0 ? `<b class="warn">Hold.</b> The interval reaches zero: the test cannot tell B from A. Do not extend.` : `<b class="warn">Hold.</b> B beats A, but by less than the +20% bar. Worth less than $0.6M a year at rollout; look at what members chose before deciding.`);
+    $('worth').innerHTML = `<b>What it is worth on the baseline.</b> A's rate is the Shop today: ${((+$('sA').value) * (+$('kA').value)).toFixed(2)} outfits per member per fortnight × 26 × ~${Math.floor(avgPrice)} tokens × $0.10 × 116,000 subscribers ≈ <b>${usd(shopToday)} a year</b>. A ${pct(lift)} lift, if it held for every subscriber, adds about <b>${usd(Math.max(0, lift) * shopToday)} a year</b>. The case document's range: $0.6M at +20%, $1.2M at +40%, $1.8M at +60%.`;
   }
   ['sA', 'sB', 'kA', 'kB'].forEach(id => $(id).oninput = simulate);
 
-  resetAll(false); simulate();
+  resetAll(false); renderCompare(); simulate();
 })();
 </script>
 </body>
