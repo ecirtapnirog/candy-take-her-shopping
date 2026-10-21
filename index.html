@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Take Her Shopping</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Built on the AI-led "Top up where the intent is" prototype: same phone, console, event log and readout. */
+:root {
+  --bg: #f3f1f6; --panel: #ffffff; --ink: #1d1a24; --muted: #6b6578; --line: #e2dde9;
+  --accent: #c2336b; --accent-ink: #ffffff; --good: #1f7a4d; --warn: #9a5b00;
+  --app-bg: #151219; --app-card: #221d29; --app-line: #342d3d; --app-ink: #f4f0f8; --app-muted: #a49cb0;
+  --app-accent: #f06a96; --app-bonus: #7b6cf6; --app-coin: #f5b93a; --app-me: #4b3fd9;
+  --f-ui: "Sora", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f0d12; --panel: #1a1720; --ink: #efeaf5; --muted: #a39cb0; --line: #2e2836;
+  --accent: #f06a96; --accent-ink: #1a0b12; --good: #5fcf98; --warn: #f0b44a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f0d12; --panel: #1a1720; --ink: #efeaf5; --muted: #a39cb0; --line: #2e2836;
+  --accent: #f06a96; --accent-ink: #1a0b12; --good: #5fcf98; --warn: #f0b44a; color-scheme: dark }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 14px; line-height: 1.45; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
+header.top h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+header.top p { margin: 0; color: var(--muted); max-width: 72ch; }
+.grid { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 28px; margin-top: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } .phone { margin: 0 auto; } }
+
+/* phone */
+.phone { width: 100%; max-width: 380px; background: var(--app-bg); color: var(--app-ink); border-radius: 34px; padding: 14px; border: 1px solid var(--app-line); box-shadow: 0 18px 50px rgba(20,10,30,.25); position: relative; overflow: hidden; height: 740px; display: flex; flex-direction: column; }
+.appbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 10px; border-bottom: 1px solid var(--app-line); }
+.who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(160deg,#f39a6b,#b0457a); border: 2px solid var(--app-accent); flex: none; }
+.who b { display: block; font-size: 15px; }
+.status { font-size: 11px; color: var(--app-accent); background: #2c1f29; border-radius: 999px; padding: 1px 8px; }
+.bar-r { display: flex; gap: 6px; align-items: center; }
+.chip-bal { display: inline-flex; align-items: center; gap: 6px; background: #2b2433; border-radius: 999px; padding: 6px 10px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--app-ink); border: 0; font: inherit; }
+.iconbtn { background: #2b2433; color: var(--app-ink); border: 0; border-radius: 999px; padding: 6px 10px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; }
+.coin { width: 15px; height: 15px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe08a, var(--app-coin)); display: inline-block; flex: none; }
+.screen { flex: 1; overflow-y: auto; padding: 12px 2px 8px; display: flex; flex-direction: column; gap: 10px; }
+.msg { max-width: 82%; padding: 9px 12px; border-radius: 16px; font-size: 13.5px; }
+.her { background: var(--app-card); align-self: flex-start; border-bottom-left-radius: 4px; }
+.me { background: var(--app-me); align-self: flex-end; border-bottom-right-radius: 4px; }
+.sys { align-self: center; font-size: 11.5px; color: var(--app-muted); background: #1f1a25; border-radius: 999px; padding: 3px 10px; }
+.pic { align-self: flex-start; width: 62%; aspect-ratio: 3 / 4; border-radius: 16px; position: relative; overflow: hidden; }
+.pic .lbl { position: absolute; left: 8px; right: 8px; bottom: 8px; font-size: 11px; background: rgba(10,6,14,.6); padding: 6px 8px; border-radius: 8px; }
+.cards { align-self: stretch; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.ocard { background: var(--app-card); border: 1.5px solid var(--app-line); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; text-align: left; font: inherit; color: var(--app-ink); padding: 0; cursor: pointer; }
+.ocard .sw { aspect-ratio: 3 / 4; position: relative; }
+.ocard .role { position: absolute; top: 6px; left: 6px; font-size: 9.5px; font-weight: 600; background: rgba(10,6,14,.65); border-radius: 999px; padding: 1px 6px; }
+.ocard .nm { font-size: 11px; font-weight: 600; padding: 6px 7px 0; line-height: 1.25; min-height: 34px; }
+.ocard .pr { display: flex; align-items: center; gap: 4px; font-size: 11.5px; padding: 2px 7px 8px; font-variant-numeric: tabular-nums; }
+.ocard:focus-visible, .btn:focus-visible, .pack:focus-visible, .chip:focus-visible, .seg button:focus-visible, .iconbtn:focus-visible { outline: 2px solid var(--app-accent); outline-offset: 2px; }
+.composer { border-top: 1px solid var(--app-line); padding: 10px 2px 2px; display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: #2b2433; color: var(--app-ink); border: 1px solid var(--app-line); border-radius: 999px; padding: 8px 12px; font: inherit; font-size: 12.5px; cursor: pointer; }
+.chip.hot { background: var(--app-accent); color: #200a12; border-color: var(--app-accent); font-weight: 600; }
+.input { flex: 1 0 100%; background: #221d29; border-radius: 14px; padding: 10px 12px; color: var(--app-muted); font-size: 13px; }
+.btn { font: inherit; font-weight: 600; border: 0; border-radius: 14px; padding: 12px 16px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn-primary { background: var(--app-accent); color: #200a12; width: 100%; }
+.btn-ghost { background: transparent; color: var(--app-ink); border: 1px solid var(--app-line); width: 100%; }
+.cost { display: inline-flex; align-items: center; gap: 4px; background: rgba(0,0,0,.18); padding: 2px 8px; border-radius: 999px; font-variant-numeric: tabular-nums; }
+.shopgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.shopgrid .ocard .nm { min-height: 30px; }
+.banner { background: #2a1c24; border: 1px solid #5a2d40; color: #f6c9d8; border-radius: 12px; padding: 10px 12px; font-size: 13px; }
+.linkbtn { background: none; border: 0; color: var(--app-accent); font: inherit; font-weight: 600; cursor: pointer; padding: 4px; }
+.note { font-size: 12px; color: var(--app-muted); margin: 0; }
+.label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--app-muted); }
+.scrim { position: absolute; inset: 0; background: rgba(5,2,8,.6); display: flex; align-items: flex-end; z-index: 5; }
+.sheet { background: #1c1722; border-top: 1px solid var(--app-line); border-radius: 22px 22px 0 0; padding: 16px; width: 100%; display: flex; flex-direction: column; gap: 10px; max-height: 92%; overflow-y: auto; }
+.sheet h3 { margin: 0; font-size: 16px; }
+.sheet .item { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--app-muted); font-variant-numeric: tabular-nums; }
+.why { background: #241e2c; border-radius: 12px; padding: 10px 12px; font-size: 12.5px; color: #d9d1e4; }
+.pack { width: 100%; text-align: left; font: inherit; color: var(--app-ink); background: var(--app-card); border: 1.5px solid var(--app-line); border-radius: 14px; padding: 10px 12px; display: grid; grid-template-columns: auto 1fr auto; gap: 2px 10px; align-items: center; cursor: pointer; }
+.pack[aria-pressed="true"] { border-color: var(--app-accent); background: #2c1f29; }
+.pack .t { font-weight: 700; font-size: 16px; font-variant-numeric: tabular-nums; }
+.pack .p { font-weight: 600; font-variant-numeric: tabular-nums; }
+.pack .sub { grid-column: 2 / 4; font-size: 11.5px; color: var(--app-muted); font-family: var(--f-data); }
+.tag { font-size: 10.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; }
+.tag.bonus { background: var(--app-bonus); color: #fff; }
+.tag.rec { background: var(--app-accent); color: #200a12; }
+.tag.min { background: #3a3242; color: #e7e0ef; }
+.mock-pay { font-size: 11.5px; color: var(--app-muted); text-align: center; }
+.toast { position: absolute; left: 50%; transform: translateX(-50%); bottom: 22px; background: #2f6a4c; color: #eafff3; padding: 8px 14px; border-radius: 999px; font-size: 12.5px; z-index: 9; white-space: nowrap; }
+.levelup { align-self: center; font-size: 12px; font-weight: 600; color: #200a12; background: linear-gradient(90deg, var(--app-coin), #ffd36e); border-radius: 999px; padding: 4px 12px; }
+
+/* console */
+.console { display: grid; gap: 16px; min-width: 0; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; min-width: 0; }
+.card h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 10px; font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.seg button { font: inherit; border: 0; background: transparent; color: var(--ink); padding: 8px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.field { display: grid; gap: 4px; min-width: 150px; flex: 1; }
+.field label { font-size: 12px; color: var(--muted); }
+.field input[type=range] { width: 100%; accent-color: var(--accent); }
+.num, .field output { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.field input[type=number] { font: inherit; font-family: var(--f-data); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { color: var(--muted); font-weight: 500; }
+td.n, th.n { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.log { font-family: var(--f-data); font-size: 12px; max-height: 220px; overflow: auto; display: grid; gap: 2px; }
+.log div { display: grid; grid-template-columns: 64px 18px minmax(0, 1fr); gap: 8px; }
+.log .v { color: var(--accent); font-weight: 500; }
+.muted { color: var(--muted); }
+.small { font-size: 12.5px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.kpi { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+.kpi b { display: block; font-size: 19px; font-family: var(--f-data); font-weight: 500; }
+.kpi span { font-size: 12px; color: var(--muted); }
+.good { color: var(--good); } .warn { color: var(--warn); }
+details summary { cursor: pointer; color: var(--muted); font-size: 12.5px; }
+.ghostbtn { font: inherit; font-size: 12.5px; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Take her shopping</h1>
+    <p>The smallest testable slice of the EverAI case's lead initiative. Variant A is today's path, as seen on 21 Oct 2026: asked to go shopping, the character improvises a picture with nothing to buy, so the member finds the Shop, buys, gifts, comes back and asks her to wear it. Variant B is the scene: she offers three real outfits at real prices in the chat, the member pays in place (with a sized top-up if short), and she wears it. Characters, pictures and payments are placeholders; the catalogue and prices are Candy Shop's, 21 Oct.</p>
+  </header>
+
+  <div class="grid">
+    <div class="phone" id="phone" aria-label="Prototype app">
+      <div class="appbar">
+        <div class="who"><span class="avatar"></span><div><b>Ava</b><span class="status" id="status">Flirting · level 4</span></div></div>
+        <div class="bar-r">
+          <button class="iconbtn" id="shopBtn">Shop</button>
+          <button class="chip-bal" id="balChip" aria-label="Token balance"><i class="coin"></i><span id="bal">60</span></button>
+        </div>
+      </div>
+      <div class="screen" id="screen"></div>
+      <div class="composer" id="composer"></div>
+      <div id="overlay"></div>
+    </div>
+
+    <div class="console">
+      <section class="card">
+        <h2>Variant</h2>
+        <div class="row">
+          <div class="seg" role="group" aria-label="Variant">
+            <button id="vA" aria-pressed="false">A · today: the Shop</button>
+            <button id="vB" aria-pressed="true">B · the scene in chat</button>
+          </div>
+          <button class="ghostbtn" id="reset">Reset member</button>
+        </div>
+        <p class="muted small" style="margin:10px 0 0" id="tapNote">Tap "Let's go shopping" in the phone. Taps are counted from that message to her wearing the outfit.</p>
+      </section>
+
+      <section class="card">
+        <h2>Member</h2>
+        <div class="row">
+          <div class="field"><label for="inBal">Balance <output id="oBal"></output></label><input id="inBal" type="range" min="0" max="300" step="1" value="60"></div>
+          <div class="field"><label for="inPace">Tokens a day, last 7 days <output id="oPace"></output></label><input id="inPace" type="range" min="0" max="300" step="5" value="85"></div>
+          <div class="field"><label for="inTyp">Usual price per outfit <output id="oTyp"></output></label><input id="inTyp" type="range" min="0" max="189" step="1" value="0"></div>
+        </div>
+        <p class="muted small" style="margin:10px 0 0">Usual price 0 means the member has never bought an outfit; she then anchors on the catalogue median.</p>
+      </section>
+
+      <section class="card">
+        <h2>Her three picks, live</h2>
+        <p class="small" style="margin:0 0 8px">One outfit at the member's usual price, one a step up, and always the cheapest she doesn't own. The model writes her lines; this rule decides what she may offer, so every offer is a real item at its real price.</p>
+        <div class="tablewrap"><table id="pickTable"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Top-up inside the scene</h2>
+        <p class="small" style="margin:0 0 8px">Reused unchanged from the AI-led prototype: the smallest pack covering the outfit plus 3 days at the member's pace; 350 (no bonus) becomes 550 (+10%) if the member spends 550 within a week; the cheapest covering pack is always shown.</p>
+        <div class="tablewrap"><table id="topTable"></table></div>
+      </section>
+
+      <section class="card">
+        <h2>Events this session</h2>
+        <div class="log" id="log"><div class="muted">Nothing yet.</div></div>
+      </section>
+
+      <section class="card">
+        <h2>What the readout will look like</h2>
+        <p class="small" style="margin:0 0 10px">Premium Plus members who open a chat during the test, split 50/50: about 9,850 a side (17% of ~116,000 payers). Synthetic members with assumed behaviour, over 14 days. The main measure is tokens spent on outfits, the brief's metric; outfit count is watched beside it. It shows how the decision is read, not a result.</p>
+        <div class="row" style="margin-bottom:10px">
+          <div class="field"><label for="sA">A: share who buy an outfit</label><input id="sA" type="number" min="0" max="1" step="0.01" value="0.07"></div>
+          <div class="field"><label for="sB">B: share who buy an outfit</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.10"></div>
+          <div class="field"><label for="kA">A: outfits per buyer</label><input id="kA" type="number" min="1" max="6" step="0.1" value="1.3"></div>
+          <div class="field"><label for="kB">B: outfits per buyer</label><input id="kB" type="number" min="1" max="6" step="0.05" value="1.4"></div>
+        </div>
+        <div class="kpis" id="kpis"></div>
+        <details style="margin-top:10px"><summary>Assumptions behind the simulation</summary>
+          <p class="small muted">Calibrated to Part 1. A: 7% of members buy an outfit in two weeks at 1.3 each, about 2.4 outfits a year, the floor read from the Achievements page (15% bought one, 7% three since launch). B: 10% at 1.4 each, which comes out near +40% in tokens, Part 1's base case, because her picks shift some buying to the cheapest outfit. Outfits per buyer are 1 plus a Poisson draw. Prices in A are any catalogue item (average 108 tokens); in B the cheapest pick is taken 30% of the time, the usual 50%, the step up 20%, anchored on a usual price drawn from the catalogue. Tokens are valued at $0.10. Rollout value assumes all ~116,000 subscribers behave like the Premium Plus test group. The guardrails (pack revenue per member over 30 days, refunds and disputes, generation cost per session) need real data.</p>
+        </details>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="recommend.js"></script>
+<script src="shopping.js"></script>
+<script>
+(function () {
+  const { PACKS, delivered, pricePerToken, recommend } = window.TopUp;
+  const { CATALOGUE, pickOutfits } = window.Shopping;
+  const $ = (id) => document.getElementById(id);
+  const gbp = (n) => '£' + n.toFixed(2);
+  const fmt = (n) => n.toLocaleString('en-GB');
+
+  const start = () => ({ balance: 60, pace: 85, typical: 0 });
+  let member = start();
+  let her = { owned: [], wearing: null, level: 4 };
+  let variant = 'B';
+  let screen = 'chat';
+  let msgs = [];
+  let taps = 0, counting = false, chosen = null, offer = null;
+
+  const events = [];
+  function log(name, detail) {
+    events.unshift({ t: new Date().toTimeString().slice(0, 8), v: variant, name, detail: detail || '' });
+    $('log').innerHTML = events.slice(0, 80).map(e => `<div><span class="muted">${e.t}</span><span class="v">${e.v}</span><span>${e.name}${e.detail ? ' · ' + e.detail : ''}</span></div>`).join('');
+  }
+  function tap() { if (counting) taps++; }
+
+  const hue = (id) => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+  const swatch = (id) => `background:linear-gradient(160deg,hsl(${hue(id)} 55% 52%),hsl(${(hue(id) + 60) % 360} 50% 22%))`;
+  function pictureHTML(label, id) { return `<div class="pic" style="${swatch(id || 'improv')}"><div class="lbl">${label}</div></div>`; }
+
+  function renderStatus() {
+    const names = { 4: 'Flirting', 5: 'Dating', 6: 'Close', 7: 'In love' };
+    $('status').textContent = `${names[her.level] || 'Close'} · level ${her.level}`;
+    $('bal').textContent = fmt(member.balance);
+  }
+
+  // ---------- chat ----------
+  function renderChat() {
+    $('screen').innerHTML = msgs.map(m => {
+      if (m.k === 'her') return `<div class="msg her">${m.t}</div>`;
+      if (m.k === 'me') return `<div class="msg me">${m.t}</div>`;
+      if (m.k === 'sys') return `<div class="sys">${m.t}</div>`;
+      if (m.k === 'lvl') return `<div class="levelup">${m.t}</div>`;
+      if (m.k === 'pic') return pictureHTML(m.t, m.id);
+      if (m.k === 'offer') return `<div class="cards">${m.picks.map(p => outfitCard(p, m.roles[p.id], 'offer')).join('')}</div>`;
+      return '';
+    }).join('');
+    $('screen').scrollTop = $('screen').scrollHeight;
+    document.querySelectorAll('#screen .ocard[data-src="offer"]').forEach(b => b.onclick = () => choose(b.dataset.id));
+    renderComposer();
+  }
+  function outfitCard(p, role, src) {
+    return `<button class="ocard" data-id="${p.id}" data-src="${src}"><span class="sw" style="${swatch(p.id)}">${role ? `<span class="role">${role}</span>` : ''}</span><span class="nm">${p.name}</span><span class="pr"><i class="coin"></i>${p.tokens}</span></button>`;
+  }
+  function renderComposer() {
+    const chips = [];
+    if (screen === 'chat') {
+      if (!counting) chips.push(`<button class="chip hot" id="cShop">Let's go shopping, pick me an outfit</button>`);
+      if (variant === 'A' && chosen && her.owned.includes(chosen.id) && her.wearing !== chosen.id) chips.push(`<button class="chip hot" id="cWear">Ask her to wear it</button>`);
+    }
+    $('composer').innerHTML = chips.join('') + `<div class="input">Write a message…</div>`;
+    if ($('cShop')) $('cShop').onclick = startShopping;
+    if ($('cWear')) $('cWear').onclick = askWear;
+  }
+  function go(s) { screen = s; $('overlay').innerHTML = ''; if (s === 'chat') renderChat(); if (s === 'shop') renderShop(); if (s === 'item') renderItem(); if (s === 'store') renderStore(); renderStatus(); if (s !== 'chat') renderComposer(); }
+  function toast(t) { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; $('phone').appendChild(d); setTimeout(() => d.remove(), 1800); }
+
+  function startShopping() {
+    counting = true; taps = 1; chosen = null;
+    msgs.push({ k: 'me', t: "Let's go shopping, pick me an outfit" });
+    log('shop_intent', `balance ${member.balance}`);
+    if (variant === 'A') {
+      msgs.push({ k: 'her', t: "ooh I'd love that… let me see" }, { k: 'her', t: 'how about something a little daring?' }, { k: 'pic', t: 'Improvised picture · not from the Shop · nothing to buy' });
+      log('reply_improvised', 'no item offered');
+      renderChat();
+      $('tapNote').textContent = "Variant A: she can't offer a Shop item. Open the Shop (top right), buy, gift it to Ava, come back and ask her to wear it.";
+    } else {
+      offer = pickOutfits({ owned: her.owned, typicalPrice: member.typical });
+      msgs.push({ k: 'her', t: "I've had my eye on three things. Which one for me?" }, { k: 'offer', picks: offer.picks, roles: offer.roles });
+      log('outfits_offered', offer.picks.map(p => `${p.name} ${p.tokens}`).join(' / '));
+      renderChat();
+      $('tapNote').textContent = 'Variant B: pick one of her three outfits.';
+    }
+  }
+
+  // ---------- variant B: in the scene ----------
+  function choose(id) {
+    tap(); chosen = CATALOGUE.find(c => c.id === id);
+    log('outfit_selected', `${chosen.name} · ${chosen.tokens} · ${offer.roles[id]}`);
+    if (member.balance >= chosen.tokens) return confirmInScene();
+    log('insufficient_shown', `balance ${member.balance}, needs ${chosen.tokens}`);
+    openTopUp(chosen, () => confirmInScene(true));
+  }
+  function confirmInScene(skip) {
+    if (skip) return buyAndWear();
+    $('overlay').innerHTML = `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cT">
+      <h3 id="cT">Get the ${chosen.name} for Ava</h3>
+      <div class="item"><span>${chosen.tokens} tokens</span><span>you have ${fmt(member.balance)}</span></div>
+      <button class="btn btn-primary" id="cOk">Get it for her <span class="cost"><i class="coin"></i>${chosen.tokens}</span></button>
+      <button class="btn btn-ghost" id="cX">Not now</button></div></div>`;
+    $('cOk').onclick = () => { tap(); buyAndWear(); };
+    $('cX').onclick = () => { log('offer_declined'); $('overlay').innerHTML = ''; };
+  }
+  function buyAndWear() {
+    $('overlay').innerHTML = '';
+    member.balance -= chosen.tokens; her.owned.push(chosen.id); her.wearing = chosen.id;
+    log('item_bought', `${chosen.name} · −${chosen.tokens} · in scene`);
+    msgs.push({ k: 'sys', t: `You got Ava the ${chosen.name}` }, { k: 'her', t: 'give me a second…' }, { k: 'pic', t: `Wearing the ${chosen.name} · placeholder`, id: chosen.id }, { k: 'her', t: 'you have good taste. what do you think?' });
+    her.level++; msgs.push({ k: 'lvl', t: `Relationship level ${her.level - 1} → ${her.level}` });
+    log('item_worn', `${taps} taps from asking to wearing`); log('level_up', `${her.level - 1} → ${her.level}`);
+    counting = false; syncInputs(); go('chat');
+    $('tapNote').textContent = `Done in ${taps} taps. Reset, or switch variant to compare.`;
+  }
+
+  // ---------- variant A: today's Shop path ----------
+  function renderShop() {
+    $('screen').innerHTML = `<div class="row" style="justify-content:space-between"><button class="linkbtn" id="back">‹ Chat</button><span class="label">Candy Shop</span></div>
+      <div class="shopgrid">${CATALOGUE.map(p => outfitCard(p, her.owned.includes(p.id) ? 'owned' : '', 'shop')).join('')}</div>`;
+    $('back').onclick = () => { tap(); go('chat'); };
+    document.querySelectorAll('#screen .ocard').forEach(b => b.onclick = () => { tap(); chosen = CATALOGUE.find(c => c.id === b.dataset.id); log('item_viewed', chosen.name); go('item'); });
+  }
+  function renderItem() {
+    const short = member.balance < chosen.tokens;
+    $('screen').innerHTML = `<div class="row" style="justify-content:space-between"><button class="linkbtn" id="back">‹ Shop</button><span class="label">Item</span></div>
+      <div class="pic" style="width:100%;${swatch(chosen.id)}"><div class="lbl">${chosen.name}</div></div>
+      <p class="note">Gift it to any character, she'll wear it whenever you ask. A unique outfit, hers to keep.</p>
+      ${short ? `<div class="banner" role="status">Not enough tokens. <button class="linkbtn" id="getT">Get tokens</button></div>` : ''}
+      <button class="btn btn-primary" id="buyNow" ${short ? 'disabled style="opacity:.45;cursor:not-allowed"' : ''}>Buy now <span class="cost"><i class="coin"></i>${chosen.tokens}</span></button>`;
+    $('back').onclick = () => { tap(); go('shop'); };
+    if (short) { log('insufficient_shown', `balance ${member.balance}, needs ${chosen.tokens}`); $('getT').onclick = () => { tap(); go('store'); }; }
+    else $('buyNow').onclick = () => { tap(); member.balance -= chosen.tokens; log('item_bought', `${chosen.name} · −${chosen.tokens} · in Shop`); syncInputs(); renderStatus(); giftSheet(); };
+  }
+  function giftSheet() {
+    $('overlay').innerHTML = `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="gT">
+      <h3 id="gT">Gift to Ava</h3><div class="why">${chosen.name}</div>
+      <button class="btn btn-primary" id="gOk">Send it to her</button></div></div>`;
+    $('gOk').onclick = () => { tap(); her.owned.push(chosen.id); log('item_gifted', chosen.name); syncInputs();
+      msgs.push({ k: 'sys', t: `You sent Ava the ${chosen.name}` }, { k: 'her', t: "that's lovely. maybe I'll try it on later" });
+      go('chat'); $('tapNote').textContent = 'Back in the chat. Ask her to wear it.'; };
+  }
+  function askWear() {
+    tap(); msgs.push({ k: 'me', t: 'Put it on for me' }, { k: 'her', t: "I'm wearing it now" }, { k: 'pic', t: `Wearing the ${chosen.name} · placeholder`, id: chosen.id });
+    her.wearing = chosen.id; log('item_worn', `${taps} taps from asking to wearing`); counting = false; renderChat();
+    $('tapNote').textContent = `Done in ${taps} taps. Reset, or switch variant to compare.`;
+  }
+  function renderStore() {
+    $('screen').innerHTML = `<div class="row" style="justify-content:space-between"><button class="linkbtn" id="back">‹ Item</button><span class="label">Token store</span></div>
+      ${PACKS.map(p => packButton(p, {})).join('')}<p class="note">Today: buy here, then go back to the item and tap Buy now again.</p>`;
+    $('back').onclick = () => { tap(); go(chosen ? 'item' : 'chat'); };
+    document.querySelectorAll('#screen .pack').forEach(b => b.onclick = () => { tap(); const p = PACKS.find(x => x.tokens === +b.dataset.t); log('pack_selected', `${p.tokens} in store`);
+      openPay(p, () => { credit(p); log('purchase_completed', `${gbp(p.price)} · +${fmt(delivered(p))}`); go('store'); toast('Tokens added'); }); });
+  }
+
+  // ---------- shared: top-up sheet and payment (from the AI-led prototype) ----------
+  function packButton(p, o) {
+    const d = delivered(p), tags = [];
+    if (o.rec) tags.push('<span class="tag rec">Recommended</span>');
+    if (o.min) tags.push('<span class="tag min">Covers it</span>');
+    if (p.bonus) tags.push(`<span class="tag bonus">+${Math.round(p.bonus * 100)}%</span>`);
+    return `<button class="pack" data-t="${p.tokens}" aria-pressed="${o.sel ? 'true' : 'false'}"><span class="t">${fmt(d)}</span><span>${tags.join(' ')}</span><span class="p">${gbp(p.price)}</span><span class="sub">${(pricePerToken(p) * 100).toFixed(1)}p a token${p.bonus ? ` · ${fmt(p.tokens)} + ${fmt(d - p.tokens)} bonus` : ''}</span></button>`;
+  }
+  function openTopUp(item, done) {
+    const r = recommend({ cost: item.tokens, balance: member.balance, dailyPace: member.pace });
+    let sel = r.pick;
+    log('sheet_viewed', `recommended ${r.pick.tokens}, cheapest ${r.cheapestCovering.tokens}`);
+    const draw = () => {
+      $('overlay').innerHTML = `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sT">
+        <div class="row" style="justify-content:space-between"><h3 id="sT">Top up to get her the ${item.name}</h3><button class="linkbtn" id="sX" aria-label="Close">✕</button></div>
+        <div class="item"><span>${item.name}</span><span>${item.tokens} tokens · you have ${member.balance}</span></div>
+        <div class="why">${r.reason}</div>
+        ${r.shown.map(p => packButton(p, { rec: p === r.pick, min: p === r.cheapestCovering && p !== r.pick, sel: p === sel })).join('')}
+        <button class="btn btn-primary" id="sBuy">Pay ${gbp(sel.price)} and get it for her</button>
+        <div class="mock-pay">After paying you'll have ${fmt(member.balance + delivered(sel) - item.tokens)} tokens left. Nothing renews.</div></div></div>`;
+      $('sX').onclick = () => { log('sheet_closed'); $('overlay').innerHTML = ''; };
+      document.querySelectorAll('#overlay .pack').forEach(b => b.onclick = () => { tap(); sel = PACKS.find(x => x.tokens === +b.dataset.t); log('pack_selected', `${sel.tokens}${sel === r.pick ? ' (recommended)' : ''}`); draw(); });
+      $('sBuy').onclick = () => { tap(); log('pack_selected', `${sel.tokens}${sel === r.pick ? ' (recommended)' : ''}`); openPay(sel, () => { credit(sel); log('purchase_completed', `${gbp(sel.price)} · +${fmt(delivered(sel))}`); done(); }); };
+    };
+    draw();
+  }
+  function openPay(p, done) {
+    $('overlay').innerHTML = `<div class="scrim"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pT">
+      <h3 id="pT">Mock payment</h3><div class="item"><span>${fmt(delivered(p))} tokens</span><span>${gbp(p.price)}</span></div>
+      <p class="note">Stands in for the saved card. No money moves in this prototype.</p>
+      <button class="btn btn-primary" id="pOk">Confirm ${gbp(p.price)}</button><button class="btn btn-ghost" id="pX">Cancel</button></div></div>`;
+    $('pOk').onclick = () => { tap(); $('overlay').innerHTML = ''; done(); };
+    $('pX').onclick = () => { log('payment_cancelled'); $('overlay').innerHTML = ''; };
+  }
+  function credit(p) { member.balance += delivered(p); syncInputs(); renderStatus(); }
+
+  // ---------- console ----------
+  function syncInputs() {
+    $('inBal').value = Math.min(300, member.balance); $('oBal').textContent = fmt(member.balance);
+    $('inPace').value = member.pace; $('oPace').textContent = member.pace;
+    $('inTyp').value = member.typical; $('oTyp').textContent = member.typical ? member.typical : 'never bought';
+    renderTables();
+  }
+  function renderTables() {
+    const cases = [['This member', member.typical], ['Never bought', 0], ['Budget buyer', 60], ['Regular', 89], ['Big spender', 140], ['Top of the range', 189]];
+    $('pickTable').innerHTML = `<thead><tr><th>Case</th><th class="n">Usual</th><th>Cheapest</th><th>Usual</th><th>Step up</th></tr></thead><tbody>` + cases.map(([n, t]) => {
+      const r = pickOutfits({ owned: n === 'This member' ? her.owned : [], typicalPrice: t });
+      const by = (role) => { const p = r.picks.find(x => r.roles && r.roles[x.id] === role); return p ? `${p.name} <span class="muted">${p.tokens}</span>` : '–'; };
+      return `<tr><td>${n}</td><td class="n">${t || '–'}</td><td>${by('cheapest')}</td><td>${by('usual')}</td><td>${by('step up')}</td></tr>`;
+    }).join('') + '</tbody>';
+    $('topTable').innerHTML = `<thead><tr><th>Outfit</th><th class="n">Cost</th><th class="n">Balance</th><th class="n">A day</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Covers it</th></tr></thead><tbody>` +
+      [CATALOGUE[0], CATALOGUE[5], CATALOGUE[11], CATALOGUE[14]].map(c => {
+        const r = recommend({ cost: c.tokens, balance: member.balance, dailyPace: member.pace });
+        return r ? `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n">${member.balance}</td><td class="n">${member.pace}</td><td class="n"><b>${fmt(delivered(r.pick))}</b></td><td class="n">${gbp(r.pick.price)}</td><td class="n">${fmt(delivered(r.cheapestCovering))}</td></tr>`
+                 : `<tr><td>${c.name}</td><td class="n">${c.tokens}</td><td class="n">${member.balance}</td><td class="n">${member.pace}</td><td class="n" colspan="3">Enough tokens, no sheet</td></tr>`;
+      }).join('') + '</tbody>';
+  }
+  function setVariant(v) {
+    variant = v; $('vA').setAttribute('aria-pressed', v === 'A'); $('vB').setAttribute('aria-pressed', v === 'B');
+    resetAll(false); log('variant_set', v === 'A' ? 'today: the Shop' : 'the scene in chat');
+  }
+  function resetAll(withLog = true) {
+    member = start(); her = { owned: [], wearing: null, level: 4 }; counting = false; taps = 0; chosen = null; offer = null;
+    msgs = [{ k: 'her', t: 'hey you. missed me?' }];
+    $('tapNote').textContent = 'Tap "Let\'s go shopping" in the phone. Taps are counted from that message to her wearing the outfit.';
+    syncInputs(); go('chat'); if (withLog) log('member_reset');
+  }
+  $('vA').onclick = () => setVariant('A');
+  $('vB').onclick = () => setVariant('B');
+  $('reset').onclick = () => resetAll();
+  $('shopBtn').onclick = () => { tap(); log('shop_opened'); go('shop'); };
+  $('balChip').onclick = () => { tap(); log('balance_opened'); go('store'); };
+  $('inBal').oninput = (e) => { member.balance = +e.target.value; syncInputs(); renderStatus(); if (screen === 'item') renderItem(); };
+  $('inPace').oninput = (e) => { member.pace = +e.target.value; syncInputs(); };
+  $('inTyp').oninput = (e) => { member.typical = +e.target.value; syncInputs(); };
+
+  // ---------- simulated readout ----------
+  function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const SUBS = 116000, PERIODS = 26, TOKEN_USD = 0.10;
+  const usd = (v) => '$' + (v / 1e6).toFixed(2) + 'M';
+  function simulate() {
+    const n = 9850, r = rng(20261021);
+    const poisson = (lam) => { let L = Math.exp(-lam), k = 0, p = 1; do { k++; p *= r(); } while (p > L); return k - 1; };
+    const arm = (isB) => {
+      const share = +$(isB ? 'sB' : 'sA').value, per = +$(isB ? 'kB' : 'kA').value;
+      const items = [], toks = []; let buyers = 0;
+      for (let i = 0; i < n; i++) {
+        let k = 0, tk = 0;
+        if (r() < share) {
+          buyers++; k = 1 + poisson(Math.max(0, per - 1));
+          for (let j = 0; j < k; j++) {
+            if (!isB) tk += CATALOGUE[Math.floor(r() * CATALOGUE.length)].tokens;
+            else {
+              const typical = CATALOGUE[Math.floor(r() * CATALOGUE.length)].tokens;
+              const o = pickOutfits({ typicalPrice: typical }); const u = r();
+              const role = u < .3 ? 'cheapest' : u < .8 ? 'usual' : 'step up';
+              tk += o.picks.find(p => o.roles[p.id] === role).tokens;
+            }
+          }
+        }
+        items.push(k); toks.push(tk);
+      }
+      const mean = (a) => a.reduce((x, y) => x + y, 0) / n;
+      const vari = (a, m) => a.reduce((x, y) => x + (y - m) ** 2, 0) / (n - 1);
+      const mi = mean(items), mt = mean(toks);
+      return { mi, vi: vari(items, mi), mt, vt: vari(toks, mt), rate: buyers / n };
+    };
+    const A = arm(false), B = arm(true);
+    const diff = B.mt - A.mt, se = Math.sqrt(A.vt / n + B.vt / n);
+    const lift = diff / A.mt, lo = (diff - 1.96 * se) / A.mt, hi = (diff + 1.96 * se) / A.mt;
+    const pass = lo > 0 && lift >= 0.20;
+    const avgPrice = CATALOGUE.reduce((x, c) => x + c.tokens, 0) / CATALOGUE.length;
+    const shopToday = (+$('sA').value) * (+$('kA').value) * avgPrice * PERIODS * SUBS * TOKEN_USD;
+    $('kpis').innerHTML = `
+      <div class="kpi"><b>${A.mt.toFixed(1)} → ${B.mt.toFixed(1)}</b><span>Tokens on outfits per member, 14 days (main measure)</span></div>
+      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${lift >= 0 ? '+' : ''}${(lift * 100).toFixed(0)}%</b><span>Lift, 95% interval ${(lo * 100).toFixed(0)}% to ${(hi * 100).toFixed(0)}%</span></div>
+      <div class="kpi"><b>${A.mi.toFixed(3)} → ${B.mi.toFixed(3)}</b><span>Outfits per member (also watched)</span></div>
+      <div class="kpi"><b>${(A.rate * 100).toFixed(1)}% → ${(B.rate * 100).toFixed(1)}%</b><span>Share who buy at least one</span></div>
+      <div class="kpi"><b>${usd(shopToday)}</b><span>Shop today at A's inputs, per year, ~116,000 subscribers (Part 1: ~$3.0M)</span></div>
+      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${usd(Math.max(0, lift) * shopToday)}</b><span>Value at full rollout, per year = lift × Shop today (Part 1: $0.6M at +20%, $1.2M at +40%)</span></div>
+      <div class="kpi"><b class="${pass ? 'good' : 'warn'}">${pass ? 'Go' : 'Hold'}</b><span>Rule: +20% tokens on outfits per member, interval above zero; guardrails checked separately</span></div>`;
+  }
+  ['sA', 'sB', 'kA', 'kB'].forEach(id => $(id).oninput = simulate);
+
+  resetAll(false); simulate();
+})();
+</script>
+</body>
+</html>
