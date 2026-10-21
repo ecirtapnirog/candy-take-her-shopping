@@ -1,6 +1,6 @@
-// "Her three picks": which Candy Shop outfits she offers when the member asks to go shopping.
+// "Her three picks": which gifts and Candy Shop outfits she offers when the member asks to go shopping.
 // The language model writes her lines; this rule decides what she is allowed to offer, so every
-// offer is a real catalogue item at its real price, and a cheaper option is always on the table.
+// offer is a real item at its real price, and a cheaper option is always on the table.
 // Pure functions, no DOM. Loaded by index.html (global `Shopping`) and by the tests (Node).
 
 (function (root) {
@@ -24,36 +24,64 @@
     { id: 'fishnet', name: 'Fishnet and Collar', tokens: 189 },
   ];
 
+  // In-chat gift shelf, read in the chat on 21 Oct 2026 (tokens). Four tabs: Best, Romantic, Luxury, Spicy.
+  // Gifts can be given again and again; outfits once per character. "Large gifts come with free videos."
+  const GIFTS = [
+    ['rose', 'Red Rose', 5], ['chocolate', 'Chocolate Box', 10], ['bouquet', 'Bouquet of Roses', 25],
+    ['perfume', 'Perfume', 30], ['stockings', 'Fishnet Stockings', 30], ['teddy', 'Giant Teddy Bear', 50],
+    ['pearls', 'Pearl Necklace', 50], ['heels', 'High Heels', 50], ['red-lingerie', 'Red Lingerie', 75],
+    ['phone', 'Phone', 75], ['vibrator', 'Vibrator', 99], ['horse', 'Horse Riding Day', 110],
+    ['ring', 'Diamond Ring', 125], ['lace-lingerie', 'Lace Lingerie', 140], ['kitten-pet', 'Kitten', 200],
+    ['bag', 'Designer Bag', 200], ['massage', 'Massage for Two', 200], ['plug', 'Butt Plug', 250],
+    ['puppy', 'Puppy', 300], ['cuffs', 'Blindfold & Cuffs', 300], ['vip', 'VIP Nightclub Night', 320],
+    ['festival', 'Music Festival', 400], ['helicopter', 'Private Helicopter Tour', 450],
+    ['paris', 'Vacation in Paris', 500], ['libertine', 'Libertine Club Night', 500],
+    ['car', 'Sports Car', 670], ['yacht', 'Yacht', 999],
+  ].map(([id, name, tokens]) => ({ id, name, tokens, kind: 'gift' }));
+  CATALOGUE.forEach((c) => { c.kind = 'outfit'; });
+  const ITEMS = [...CATALOGUE, ...GIFTS];
+
   function median(xs) {
     const s = [...xs].sort((a, b) => a - b);
     const m = Math.floor(s.length / 2);
     return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
   }
 
-  // owned: ids she already has. typicalPrice: median tokens the member paid per item, last 30 days (0 = never bought).
-  // Rule, in one sentence: one outfit at your usual price, one a step up, and always the cheapest she doesn't have.
-  function pickOutfits({ catalogue = CATALOGUE, owned = [], typicalPrice = 0 } = {}) {
-    const open = catalogue.filter((c) => !owned.includes(c.id)).sort((a, b) => a.tokens - b.tokens || a.name.localeCompare(b.name));
-    if (open.length === 0) return { picks: [], anchor: null };
-    if (open.length <= 3) return { picks: open, anchor: null };
+  // owned: outfit ids she already has (gifts can repeat). typicalPrice: median tokens the member paid per
+  // gift or outfit, last 30 days (0 = never bought).
+  // Rule, in one sentence: one item at your usual price, one a step up, one cheaper, and at least one
+  // outfit she can wear while any are left.
+  function pickOffers({ owned = [], typicalPrice = 0 } = {}) {
+    const pool = ITEMS.filter((c) => c.kind === 'gift' || !owned.includes(c.id))
+      .sort((a, b) => a.tokens - b.tokens || a.name.localeCompare(b.name));
+    const outfitsLeft = pool.filter((c) => c.kind === 'outfit');
+    const anchor = typicalPrice > 0 ? typicalPrice : median(pool.map((c) => c.tokens));
+    const near = (list, x) => [...list].sort((a, b) => Math.abs(a.tokens - x) - Math.abs(b.tokens - x) || a.tokens - b.tokens)[0];
 
-    const anchor = typicalPrice > 0 ? typicalPrice : median(open.map((c) => c.tokens));
-    const cheapest = open[0];
-    const byDistance = open.filter((c) => c !== cheapest)
-      .sort((a, b) => Math.abs(a.tokens - anchor) - Math.abs(b.tokens - anchor) || a.tokens - b.tokens);
-    const usual = byDistance[0];
-    const stretch = open.find((c) => c !== cheapest && c !== usual && c.tokens > usual.tokens)
-      || byDistance.find((c) => c !== usual);
-
-    const picks = [cheapest, usual, stretch].sort((a, b) => a.tokens - b.tokens);
-    return {
-      anchor,
-      picks,
-      roles: { [cheapest.id]: 'cheapest', [usual.id]: 'usual', [stretch.id]: 'step up' },
-    };
+    // usual: closest to the anchor; an outfit if one sits within 25% of it, so she has something to wear.
+    const outfitNear = outfitsLeft.length ? near(outfitsLeft, anchor) : null;
+    let usual = outfitNear && Math.abs(outfitNear.tokens - anchor) <= 0.25 * anchor ? outfitNear : near(pool, anchor);
+    const rest = () => pool.filter((c) => ![usual, cheaper, stepUp].includes(c));
+    let cheaper = null, stepUp = null;
+    // at the top of the range there is nothing to step up to: the dearest item becomes the step up.
+    if (!pool.some((c) => c.tokens > usual.tokens)) { stepUp = usual; usual = near(pool.filter((c) => c !== stepUp && c.tokens <= stepUp.tokens / 1.3), anchor); }
+    // at the bottom there is nothing cheaper: the cheapest item becomes the cheaper pick.
+    if (!stepUp && !pool.some((c) => c.tokens < usual.tokens)) { cheaper = usual; usual = near(pool.filter((c) => c.tokens >= cheaper.tokens / 0.6), anchor); }
+    // cheaper: the dearest item at or under 60% of the usual price, of the other kind if possible.
+    const under = rest().filter((c) => c.tokens <= 0.6 * usual.tokens);
+    cheaper = cheaper || under.filter((c) => c.kind !== usual.kind).pop() || under.pop() || rest()[0];
+    // step up: the cheapest item at least 30% above the usual price.
+    stepUp = stepUp || rest().find((c) => c.tokens >= 1.3 * usual.tokens) || rest().filter((c) => c.tokens > usual.tokens)[0] || rest().pop();
+    // at least one outfit while any are left
+    if (outfitsLeft.length && ![usual, cheaper, stepUp].some((c) => c.kind === 'outfit')) {
+      const o = near(outfitsLeft, anchor);
+      if (o.tokens < usual.tokens) cheaper = o; else stepUp = o;
+    }
+    const picks = [cheaper, usual, stepUp].sort((a, b) => a.tokens - b.tokens);
+    return { anchor, picks, roles: { [cheaper.id]: 'cheaper', [usual.id]: 'usual', [stepUp.id]: 'step up' } };
   }
 
-  const api = { CATALOGUE, pickOutfits, median };
+  const api = { CATALOGUE, GIFTS, ITEMS, pickOffers, median };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Shopping = api;
 })(typeof window !== 'undefined' ? window : globalThis);
