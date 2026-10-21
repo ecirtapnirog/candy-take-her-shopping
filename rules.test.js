@@ -1,7 +1,7 @@
 // Run: node rules.test.js
 const assert = require('assert');
 const { recommend, delivered } = require('./recommend.js');
-const { pickOffers, CATALOGUE, ITEMS } = require('./shopping.js');
+const { pickOffers, pickEvening, CATALOGUE, ITEMS, EXPERIENCES, GIFTS } = require('./shopping.js');
 
 let n = 0;
 function t(name, fn) { fn(); n++; console.log('ok', n, name); }
@@ -36,22 +36,39 @@ t('every offer is a real item at its real price', () => {
   for (const p of r.picks) assert.ok(ITEMS.some((c) => c.id === p.id && c.tokens === p.tokens));
 });
 
-// Top-up inside the scene (rule reused from the AI-led prototype)
-t('enough tokens: no sheet', () => {
-  assert.strictEqual(recommend({ cost: 89, balance: 120, dailyPace: 40 }), null);
+// The evening out
+t('she always offers to stay in for free', () => {
+  for (const s of [0, 50, 120, 320, 600, 999, 3000]) assert.ok(pickEvening({ sessionSpend: s }).offers.some((o) => o.tokens === 0));
 });
-t('short on an 89-token outfit, light user: smallest pack that covers', () => {
-  const r = recommend({ cost: 89, balance: 20, dailyPace: 0 });
+t('she leads with the evening closest to a usual session', () => {
+  assert.strictEqual(pickEvening({ sessionSpend: 120 }).lead.id, 'evening-wine');
+  assert.strictEqual(pickEvening({ sessionSpend: 900 }).lead.id, 'evening-yacht');
+});
+t('both evenings priced on the shelf scale: yacht at the shelf yacht price', () => {
+  const yacht = EXPERIENCES.find((e) => e.id === 'evening-yacht');
+  assert.strictEqual(yacht.tokens, GIFTS.find((g) => g.id === 'yacht').tokens);
+  for (const e of EXPERIENCES) assert.ok(e.tokens >= 5 && e.tokens <= 999);
+});
+
+// Top-up inside the scene, sized on the session
+t('enough tokens: no sheet', () => {
+  assert.strictEqual(recommend({ cost: 89, balance: 120, sessionSpend: 150 }), null);
+});
+t('short on an 89-token outfit, no history: smallest pack that covers', () => {
+  const r = recommend({ cost: 89, balance: 20, sessionSpend: 0 });
   assert.strictEqual(r.pick.tokens, 100);
 });
-t('short on a 189-token outfit, moderate user: 350 becomes 550 with bonus', () => {
-  const r = recommend({ cost: 189, balance: 20, dailyPace: 85 });
+t('short on a 189-token outfit, usual session 300: covers the rest of the session, 350 becomes 550', () => {
+  const r = recommend({ cost: 189, balance: 20, sessionSpend: 300 });
   assert.strictEqual(r.pick.tokens, 550);
   assert.ok(delivered(r.cheapestCovering) >= 169);
 });
+t('a dear evening is not padded: the yacht for a light member gets the cheapest pack that covers it', () => {
+  const r = recommend({ cost: 999, balance: 96, sessionSpend: 120 });
+  assert.strictEqual(r.pick, r.cheapestCovering);
+});
 t('cheapest covering pack is always shown', () => {
-  const r = recommend({ cost: 189, balance: 0, dailyPace: 200 });
-  assert.ok(r.shown.includes(r.cheapestCovering));
+  for (const s of [0, 100, 300, 1000]) { const r = recommend({ cost: 320, balance: 0, sessionSpend: s }); assert.ok(r.shown.includes(r.cheapestCovering)); }
 });
 
 console.log(`\n${n} tests passed`);

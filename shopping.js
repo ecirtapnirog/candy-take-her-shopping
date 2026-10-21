@@ -81,7 +81,28 @@
     return { anchor, picks, roles: { [cheaper.id]: 'cheaper', [usual.id]: 'usual', [stepUp.id]: 'step up' } };
   }
 
-  const api = { CATALOGUE, GIFTS, ITEMS, pickOffers, median };
+  // The evening out: what the opening act leads to. Today these exist only as emoji on the gift shelf
+  // (Yacht 999; Horse Riding Day 110 came back as a 15-second video and a photo, 21 Oct). Here she proposes
+  // the evening herself, after the shopping, wearing what you bought her. Prices stay on today's shelf scale:
+  // the yacht at the shelf's 999, the wine evening at 320 like the VIP Nightclub Night. Staying in is free.
+  const EXPERIENCES = [
+    { id: 'evening-wine', name: 'A rare bottle, just us', tokens: 320, kind: 'experience',
+      gives: ['her video toast, 15s', 'three photos on the terrace', 'a voice note'], scene: 'wine' },
+    { id: 'evening-yacht', name: 'Sunset on the yacht', tokens: 999, kind: 'experience',
+      gives: ['her video on deck, 30s', 'five photos at sunset', 'a voice note', 'the evening saved to her profile'], scene: 'yacht' },
+  ];
+  const STAY_IN = { id: 'stay', name: 'Stay in tonight', tokens: 0, kind: 'free', gives: ['a photo, no charge'], scene: 'stay' };
+
+  // Rule, in one sentence: she leads with the evening closest to what this member spends in a usual
+  // session, always shows the other one, and always offers to stay in for free.
+  function pickEvening({ sessionSpend = 0 } = {}) {
+    const byFit = [...EXPERIENCES].sort((a, b) => Math.abs(a.tokens - sessionSpend) - Math.abs(b.tokens - sessionSpend) || a.tokens - b.tokens);
+    const lead = byFit[0];
+    const other = byFit[1];
+    return { lead, offers: [lead, other, STAY_IN] };
+  }
+
+  const api = { CATALOGUE, GIFTS, ITEMS, EXPERIENCES, STAY_IN, pickOffers, pickEvening, median };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.Shopping = api;
 })(typeof window !== 'undefined' ? window : globalThis);
