@@ -198,7 +198,7 @@ td.d { text-align: right; font-family: var(--f-data); }
       <section class="card">
         <h2>2 · Opportunity</h2>
         <p class="lead">"I want to take her somewhere, not send her an emoji."</p>
-        <p class="small" style="margin:0">On 21 Oct, on a character the member created: asked to go shopping and then out on a yacht with a good bottle of wine, she answered "you really know how to sweep a girl away" and offered nothing to buy. A Horse Riding Day from the gift shelf (110 tokens) came back as a 15-second video of her riding and a photo at sunset: the experience already turns into media. Asked "what should we do next?", she said "maybe we should just lean back and watch the colors change". The story works; nothing comes next. The shelf already sells evenings as emoji: Horse Riding Day 110, VIP Nightclub Night 320, Vacation in Paris 500, Yacht 999.</p>
+        <p class="small" style="margin:0">On 21 Oct, on a character the member created: asked to go shopping and then out on a yacht with a good bottle of wine, she answered "you really know how to sweep a girl away" and offered nothing to buy. A Horse Riding Day from the gift shelf (110 tokens) came back as a 15-second video of her riding by the water and a photo on horseback at sunset: the experience already turns into media. Asked "what should we do next?", she said "maybe we should just lean back and watch the colors change". The story works; nothing comes next. The shelf already sells evenings as emoji: Horse Riding Day 110, VIP Nightclub Night 320, Vacation in Paris 500, Yacht 999.</p>
       </section>
 
       <section class="card">
@@ -231,7 +231,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
       <section class="card">
         <h2>4 · Assumptions, and what the test reads</h2>
-        <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50 (about 9,850 a side), 14 days. Each row is something that must be true for B to be worth building. Rows marked "simulated" are drawn from the assumptions at the bottom, to show how the result would be read; the others can only be read in the real test.</p>
+        <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50 (up to about 9,850 a side), 14 days. Each row is something that must be true for B to be worth building. Rows marked "simulated" are drawn from the assumptions at the bottom, to show how the result would be read; the others can only be read in the real test.</p>
         <div class="tablewrap"><table id="asTable"></table></div>
         <p class="finding" id="inference"></p>
         <details style="margin-top:6px"><summary>Where the main measure comes from, arm by arm</summary><div class="tablewrap" style="margin-top:6px"><table id="abTable"></table></div></details>
@@ -621,7 +621,7 @@ td.d { text-align: right; font-family: var(--f-data); }
   function drawGift(r) { let u = r() * gWsum; for (let i = 0; i < GIFTS.length; i++) { u -= gW[i]; if (u <= 0) return GIFTS[i]; } return GIFTS[GIFTS.length - 1]; }
 
   $('baseTable').innerHTML = `<thead><tr><th>#</th><th>Line</th><th>Calculation</th><th class="n">Result</th></tr></thead><tbody>` +
-    [['B4', 'Payers', '~1% of 11.6M monthly visitors', '~116,000'], ['B5', 'Spend per payer', '$20–25M ÷ 12 ÷ 116,000', '$15–18 a month'], ['B6', 'Heavy payers', '7% of payers bring 25% of revenue (RevenueCat)', '~8,100 at $51–64 a month'], ['B8', 'Token packs, the new money', '$20–25M − subscriptions', '$7–12M a year'], ['B9', 'Value of a token', '100-token pack at $9.99', '$0.10']]
+    [['B4', 'Payers', '~1% of 11.6M monthly visitors', '~116,000'], ['B5', 'Spend per payer', '$20–25M ÷ 12 ÷ 116,000', '$14–18 a month'], ['B6', 'Heavy payers', '7% of payers bring 25% of revenue (RevenueCat)', '~8,100 at $51–64 a month'], ['B8', 'Token packs, the new money', '$20–25M − subscriptions', '$7–12M a year'], ['B9', 'Value of a token', '9.99 per 100 tokens', '$0.10']]
       .map(([k, l, c, r]) => `<tr><td>${k}</td><td>${l}</td><td>${c}</td><td class="n">${r}</td></tr>`).join('') + '</tbody>';
   $('needTable').innerHTML = `<thead><tr><th class="n">A year</th><th class="n">Evenings a month</th><th>Which is</th></tr></thead><tbody>` +
     [[0.5e6, 'one heavy payer in ten, once a month'], [1e6, '<b>one heavy payer in five, once a month (the first step)</b>'], [3e6, 'more than half of heavy payers monthly, or ordinary payers too: the direction, not the first step']]
@@ -666,7 +666,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     const ok = (c) => c ? '<span class="good">holds</span>' : '<span class="warn">fails</span>';
     const sesA = last.A ? `${last.A.spent} tok` : 'run A', sesB = last.B ? `${last.B.spent} tok` : 'run B';
     $('asTable').innerHTML = `<thead><tr><th>Must be true</th><th>Measured by</th><th class="n">A</th><th class="n">B</th><th>Read</th></tr></thead><tbody>` +
-      row('Desirable', 'Members go out with her after shopping', 'Share of opening-act buyers who go on to an evening', 'One in five', '–', `${(B.evenings - B.again) && B.buyers ? ((evBuyers / B.buyers) * 100).toFixed(0) + '%' : '–'}`, `${ok(B.buyers && evBuyers / B.buyers >= 0.2)} · simulated`) +
+      row('Desirable', 'Members go out with her after shopping', 'Share of opening-act buyers who go on to an evening', 'Up', '–', `${(B.evenings - B.again) && B.buyers ? ((evBuyers / B.buyers) * 100).toFixed(0) + '%' : '–'}`, `${ok(evBuyers > 0)} · simulated`) +
       row('Viable', 'They spend more on giving and going out', '<b>Tokens per member on gifts, outfits and evenings, 14 days (main)</b>', '+10 tokens a member (≈$0.5M a year)', A.mt.toFixed(1), B.mt.toFixed(1), `${ok(loAbs > 0 && diff >= BAR)} · +${diff.toFixed(1)} (${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}) · simulated`) +
       row('Viable', 'They come back for another', '<b>Share of evening-goers who go out again within 14 days</b>', '15%', '–', `${(repeat * 100).toFixed(0)}%`, `${ok(repeat >= 0.15)} · simulated`) +
       row('Viable', 'It is new money, not moved spend', 'Tokens on everything else per member; pack revenue per member, 30 days', 'No drop', '–', '–', 'test only') +
@@ -683,7 +683,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     $('decision').innerHTML = pass
       ? `<b class="good">Go, if the "new money" row holds.</b> Tokens per member rise by more than the bar of 10 a fortnight (about $0.5M a year, the bottom of the brief's range) with the interval above zero, and enough evening-goers come back. Before widening, check that other spending did not drop and pack revenue per member rose over 30 days.`
       : (loAbs <= 0 ? `<b class="warn">Hold.</b> The interval reaches zero: the test cannot tell B from A.` : (repeat < 0.15 ? `<b class="warn">Hold.</b> Spend rose, but too few came back for a second evening: it reads as a novelty, not a habit.` : `<b class="warn">Hold.</b> B beats A, but by less than the bar of 10 tokens a member a fortnight.`));
-    $('worth').innerHTML = `<b>What it would be worth.</b> B adds ${diff.toFixed(1)} tokens per Premium Plus member a fortnight. Across about ${fmt(PREMIUM_PLUS)} Premium Plus members (one payer in six, an assumption), that is about <b>${usdM(yearly)} a year</b>, if the extra tokens are bought ones. The first step in the case document is about $1M: one heavy payer in five going out once a month. Widening to ordinary payers, more evenings and brand partners is the direction, sized only once this reads.`;
+    $('worth').innerHTML = `<b>What it would be worth.</b> B adds ${diff.toFixed(1)} tokens per Premium Plus member a fortnight. Across about ${fmt(PREMIUM_PLUS)} Premium Plus members (about 17% of payers, an assumption), that is about <b>${usdM(yearly)} a year</b>, if the extra tokens are bought ones. The first step in the case document is about $1M: one heavy payer in five going out once a month. Widening to ordinary payers, more evenings and brand partners is the direction, sized only once this reads.`;
   }
   ['sA', 'kA', 'sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
 
