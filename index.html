@@ -239,23 +239,20 @@ td.d { text-align: right; font-family: var(--f-data); }
         <p class="small" style="margin:0 0 8px">Premium Plus members who open a chat during the test, split 50/50 (up to about 9,850 a side), 14 days. Three questions, and what would stop it.</p>
         <div class="tablewrap"><table id="asTable"></table></div>
         <details style="margin-top:10px"><summary>Rehearse the readout with assumed numbers</summary>
-          <p class="small" style="margin:8px 0">Not a result: made-up inputs, to show how the real test would be read. Change them to see the decision move.</p>
+          <p class="small" style="margin:8px 0">Made-up inputs for B, the night out, to show how the real result would be read. Change them and watch the status.</p>
           <div class="row">
-            <div class="field"><label for="sA">A: share who buy a gift or outfit in 14 days</label><input id="sA" type="number" min="0" max="1" step="0.01" value="0.10"></div>
-            <div class="field"><label for="kA">A: items per buyer</label><input id="kA" type="number" min="1" max="6" step="0.1" value="1.5"></div>
-            <div class="field"><label for="sB">B: share who buy in the opening act</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.12"></div>
-            <div class="field"><label for="eB">B: of those, share who go on to an evening</label><input id="eB" type="number" min="0" max="1" step="0.01" value="0.30"></div>
-            <div class="field"><label for="rB">B: of those, share who go out again within 14 days</label><input id="rB" type="number" min="0" max="1" step="0.01" value="0.20"></div>
+            <div class="field"><label for="sB">Share who buy while shopping with her</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.12"></div>
+            <div class="field"><label for="eB">Of those, share who go on to an evening</label><input id="eB" type="number" min="0" max="1" step="0.01" value="0.30"></div>
+            <div class="field"><label for="rB">Of those, share who go out again within 14 days</label><input id="rB" type="number" min="0" max="1" step="0.01" value="0.20"></div>
           </div>
           <div class="tablewrap" style="margin-top:8px"><table id="abTable"></table></div>
-          <p class="finding" id="inference"></p>
           <div class="decision" id="decision"></div>
         </details>
       </section>
 
       <section class="card">
         <h2>5 · Decision</h2>
-        <p class="small" style="margin:0"><b>Go to Premium</b> if questions 1, 2 and 3 hold and nothing in "Stop if" trips. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
+        <p class="small" style="margin:0"><b>Go:</b> questions 1, 2 and 3 pass and nothing in "Stop if" trips; extend to Premium. <b>Not yet:</b> any question fails; look at what members chose, change the evening and test again.</p>
         <p class="small" style="margin:8px 0 0"><b>What it is worth, in evenings.</b> An evening averages about $50. $0.5M a year is about 830 evenings a month: roughly 420 regulars going out twice a month, or 830 once. The target, $1M, is one heavy paying user in five going out once a month. Counted on the people who come back, not on a two-week burst. More evenings, ordinary paying users and brand partners come after, sized only once this reads.</p>
       </section>
 
@@ -634,56 +631,23 @@ td.d { text-align: right; font-family: var(--f-data); }
       .map(([v, w]) => `<tr><td class="n">${usdM(v)}</td><td class="n">${fmt(v / EVENING_USD / 12)}</td><td>${w}</td></tr>`).join('') + '</tbody>';
 
   function simulate() {
-    const n = 9850, r = rng(20261021);
-    const sA = +$('sA').value, kA = +$('kA').value, sB = +$('sB').value, eB = +$('eB').value, rB = +$('rB').value;
-    const poisson = (lam) => { let L = Math.exp(-lam), k = 0, p = 1; do { k++; p *= r(); } while (p > L); return k - 1; };
-    const todayItem = () => r() < 0.38 ? CATALOGUE[Math.floor(r() * CATALOGUE.length)] : drawGift(r);
-    const eveningTokens = () => (r() < 0.75 ? 320 : 999);
-    const arm = (isB) => {
-      const toks = []; let buyers = 0, items = 0, evenings = 0, again = 0, itemTok = 0, eveTok = 0;
-      for (let i = 0; i < n; i++) {
-        let tk = 0;
-        if (isB) {
-          if (r() < sB) {
-            buyers++; const base = todayItem(); const o = pickOffers({ typicalPrice: base.tokens }); const u = r();
-            const role = u < .25 ? 'cheaper' : u < .75 ? 'usual' : 'step up'; const it = o.picks.find(p => o.roles[p.id] === role);
-            tk += it.tokens; itemTok += it.tokens; items++;
-            if (r() < eB) { const e = eveningTokens(); tk += e; eveTok += e; evenings++;
-              if (r() < rB) { const e2 = eveningTokens(); tk += e2; eveTok += e2; evenings++; again++; } }
-          }
-        } else if (r() < sA) {
-          buyers++; const k = 1 + poisson(Math.max(0, kA - 1));
-          for (let j = 0; j < k; j++) { const it = todayItem(); tk += it.tokens; itemTok += it.tokens; items++; }
-        }
-        toks.push(tk);
-      }
-      const tok = toks.reduce((x, y) => x + y, 0), mt = tok / n;
-      const out = toks.filter(x => x > 0);
-      return { mt, vt: toks.reduce((x, y) => x + (y - mt) ** 2, 0) / (n - 1), buyers, rate: buyers / n, items, evenings, again, itemTok, eveTok, tok, perBuyer: out.length ? tok / out.length : 0 };
-    };
-    const A = arm(false), B = arm(true);
-    const diff = B.mt - A.mt, se = Math.sqrt(A.vt / n + B.vt / n);
-    const lift = diff / A.mt, lo = (diff - 1.96 * se) / A.mt, hi = (diff + 1.96 * se) / A.mt;
-    const evBuyers = B.evenings - B.again, repeat = evBuyers ? B.again / evBuyers : 0;
-    const goShare = evBuyers / n; const pass = goShare >= 0.02 && repeat >= 0.15;
-
-    const sesA = last.A ? `${last.A.spent} tokens` : 'run A', sesB = last.B ? `${last.B.spent} tokens` : 'run B';
-    const ok = (c) => c ? '<span class="good">holds</span>' : '<span class="warn">fails</span>';
-    const srow = (l, a, b, v) => `<tr><td>${l}</td><td class="n">${a}</td><td class="n">${b}</td><td>${v}</td></tr>`;
-    $('abTable').innerHTML = `<thead><tr><th>Assumed result, 14 days</th><th class="n">A · today</th><th class="n">B · our night out</th><th>Against the bar</th></tr></thead><tbody>` +
-      srow('Bought something in the opening act (B) or from the shelf or Shop (A)', fmt(A.buyers), fmt(B.buyers), '') +
-      srow('<b>1 · Went out with her</b>', '–', `${fmt(evBuyers)} (${(goShare * 100).toFixed(1)}% of members)`, `${ok(goShare >= 0.02)} · bar about 2% (≈190)`) +
-      srow('<b>2 · Went out again</b>', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}% of those)`, `${ok(repeat >= 0.15)} · bar 15%`) +
-      srow('3 · New money', '–', '–', 'read in the real test: pack revenue, other spending') +
-      srow('A session on the phone (your runs)', sesA, sesB, '') + '</tbody>';
-    $('inference').innerHTML = `<b>Reading it.</b> In B, ${fmt(evBuyers)} of ${fmt(n)} members went out with her within 14 days (${(goShare * 100).toFixed(1)}%), and ${fmt(B.again)} of them went out again. The money is counted on the ones who come back, not on the two weeks: one evening is a novelty, two is a habit. Question 3, whether it is new money, can only be read in the real test.`;
-
+    const n = 9850;
+    const sB = +$('sB').value, eB = +$('eB').value, rB = +$('rB').value;
+    const goers = Math.round(n * sB * eB), again = Math.round(goers * rB);
+    const goShare = goers / n, repeat = goers ? again / goers : 0;
+    const p1 = goShare >= 0.02, p2 = Math.round(repeat * 100) >= 15, pass = p1 && p2;
+    const st = (c) => c ? '<b class="good">Pass</b>' : '<b class="warn">Fail</b>';
+    const srow = (l, v, bar, s) => `<tr><td>${l}</td><td class="n">${v}</td><td>${bar}</td><td>${s}</td></tr>`;
+    $('abTable').innerHTML = `<thead><tr><th>Question</th><th class="n">Assumed result</th><th>Bar</th><th>Status</th></tr></thead><tbody>` +
+      srow('<b>1 · Do they go?</b>', `${(goShare * 100).toFixed(1)}% (${fmt(goers)} members)`, 'about 2% (≈190)', st(p1)) +
+      srow('<b>2 · Do they come back?</b>', `${(repeat * 100).toFixed(0)}% (${fmt(again)} of them)`, '15%', st(p2)) +
+      srow('<b>3 · Is it new money?</b>', '–', 'no drop in packs or other spending', '<span style="color:var(--muted)">Read in the real test</span>') + '</tbody>';
     $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
     $('decision').innerHTML = pass
-      ? `<b class="good">With these numbers: go</b>, if question 3 and the stop line hold in the real test. ${(goShare * 100).toFixed(1)}% went out (bar about 2%) and ${(repeat * 100).toFixed(0)}% of them came back (bar 15%).`
-      : (goShare < 0.02 ? `<b class="warn">Hold.</b> Too few went out: ${(goShare * 100).toFixed(1)}% against a bar of about 2%.` : `<b class="warn">Hold.</b> They went out, but too few came back for a second evening: it reads as a novelty, not a habit.`);
+      ? '<b class="good">Overall: Go</b> · 1 and 2 pass; 3 and the stop line are read in the real test.'
+      : `<b class="warn">Overall: Not yet</b> · ${!p1 ? 'too few go out' : 'they go once but too few come back'}. Change the evening and test again.`;
   }
-  ['sA', 'kA', 'sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
+  ['sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
   $('asTable').innerHTML = `<thead><tr><th>Question</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
     [['<b>1 · Do they go?</b>', '<b>Share of members who buy an evening within 14 days</b>', '<b>About 2%</b> (≈190 of 9,850): the pace of 830 evenings a month across Premium Plus, $0.5M a year'],
      ['<b>2 · Do they come back?</b>', '<b>Share of evening-goers who go out again within 14 days</b>', '<b>15% or more</b>'],
