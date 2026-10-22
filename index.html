@@ -200,7 +200,8 @@ td.d { text-align: right; font-family: var(--f-data); }
       <section class="card">
         <h2>2 · Opportunity</h2>
         <p class="lead">"I want to take her somewhere, not send her an emoji."</p>
-        <p class="small" style="margin:0">On 21 Oct, on a character the member created: asked to go shopping and then out on a yacht with a good bottle of wine, she answered "you really know how to sweep a girl away" and offered nothing to buy. A Horse Riding Day from the gift shelf (110 tokens) came back as a 15-second video of her riding by the water and a photo on horseback at sunset: the experience already turns into media. Asked "what should we do next?", she said "maybe we should just lean back and watch the colors change". The story works; nothing comes next. The shelf already sells evenings as emoji: Horse Riding Day 110, VIP Nightclub Night 320, Vacation in Paris 500, Yacht 999.</p>
+        <p class="small" style="margin:0">On 21 Oct, on a character the member created: asked to go shopping and then out on a yacht with a good bottle of wine, she answered "you really know how to sweep a girl away" and offered nothing to buy. A Horse Riding Day from the gift shelf (110 tokens) came back as a 15-second video of her riding by the water and a photo on horseback at sunset: the experience already turns into media. Asked "what should we do next?", she said "maybe we should just lean back and watch the colors change". The shelf already sells evenings as emoji: Horse Riding Day 110, VIP Nightclub Night 320, Vacation in Paris 500, Yacht 999.</p>
+        <p class="small" style="margin:8px 0 0"><b>What we build on.</b> Today a gift already comes back as a photo or a video of her with it, or wearing it: that works, and the night out builds on it. What it adds is momentum: she proposes the shopping and the evening, an evening brings more visuals than one gift, and she suggests the next one. Later: better gifts, brand partners, and a whole shopping experience.</p>
       </section>
 
       <section class="card">
@@ -255,7 +256,7 @@ td.d { text-align: right; font-family: var(--f-data); }
       <section class="card">
         <h2>5 · Decision</h2>
         <p class="small" style="margin:0"><b>Go to Premium</b> if questions 1, 2 and 3 hold and nothing in "Stop if" trips. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
-        <p class="small" style="margin:8px 0 0"><b>What it is worth, in evenings.</b> An evening averages about $50. $0.5M a year is about 830 evenings a month: roughly 420 regulars going out twice a month, or 830 once. The target, $1M, is one heavy payer in five going out once a month. Counted on the people who come back, not on a two-week burst. More evenings, ordinary payers and brand partners come after, sized only once this reads.</p>
+        <p class="small" style="margin:8px 0 0"><b>What it is worth, in evenings.</b> An evening averages about $50. $0.5M a year is about 830 evenings a month: roughly 420 regulars going out twice a month, or 830 once. The target, $1M, is one heavy paying user in five going out once a month. Counted on the people who come back, not on a two-week burst. More evenings, ordinary paying users and brand partners come after, sized only once this reads.</p>
       </section>
 
       <section class="card">
@@ -626,10 +627,10 @@ td.d { text-align: right; font-family: var(--f-data); }
   function drawGift(r) { let u = r() * gWsum; for (let i = 0; i < GIFTS.length; i++) { u -= gW[i]; if (u <= 0) return GIFTS[i]; } return GIFTS[GIFTS.length - 1]; }
 
   $('baseTable').innerHTML = `<thead><tr><th>#</th><th>Line</th><th>Calculation</th><th class="n">Result</th></tr></thead><tbody>` +
-    [['B4', 'Payers', '~1% of 11.6M monthly visitors', '~116,000'], ['B5', 'Spend per payer', '$20–25M ÷ 12 ÷ 116,000', '$14–18 a month'], ['B6', 'Heavy payers', '7% of payers bring 25% of revenue (RevenueCat)', '~8,100 at $51–64 a month'], ['B8', 'Token packs, the new money', '$20–25M − subscriptions', '$7–12M a year'], ['B9', 'Value of a token', '9.99 per 100 tokens', '$0.10']]
+    [['B4', 'Paying users', '~1% of 11.6M monthly visitors', '~116,000'], ['B5', 'ARPPU (all revenue per paying user)', '$20–25M ÷ 12 ÷ 116,000', '$14–18 a month, subscription and packs'], ['B6', 'Heavy paying users', '7% of paying users bring 25% of revenue (RevenueCat)', '~8,100 at $51–64 a month'], ['B8', 'Token packs, the new money', '$20–25M − subscriptions', '$7–12M a year; ≈ $5–9 per paying user a month'], ['B9', 'Value of a token', '9.99 per 100 tokens', '$0.10']]
       .map(([k, l, c, r]) => `<tr><td>${k}</td><td>${l}</td><td>${c}</td><td class="n">${r}</td></tr>`).join('') + '</tbody>';
   $('needTable').innerHTML = `<thead><tr><th class="n">A year</th><th class="n">Evenings a month</th><th>Which is</th></tr></thead><tbody>` +
-    [[0.5e6, 'one heavy payer in ten, once a month'], [1e6, '<b>one heavy payer in five, once a month (the first step)</b>'], [3e6, 'more than half of heavy payers monthly, or ordinary payers too: the direction, not the first step']]
+    [[0.5e6, 'one heavy paying user in ten, once a month'], [1e6, '<b>one heavy paying user in five, once a month (the first step)</b>'], [3e6, 'more than half of heavy paying users monthly, or ordinary paying users too: the direction, not the first step']]
       .map(([v, w]) => `<tr><td class="n">${usdM(v)}</td><td class="n">${fmt(v / EVENING_USD / 12)}</td><td>${w}</td></tr>`).join('') + '</tbody>';
 
   function simulate() {

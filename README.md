@@ -2,7 +2,7 @@
 
 The smallest testable slice of the lead initiative in the EverAI case: gifting and the Candy Shop rebuilt as a night out inside the chat. Shopping is the opening act; the evening is the payoff. If she proposes both, at real prices, do members spend more in a session, and do they come back for another evening?
 
-- **A (today, as seen on 21 Oct 2026 on a character the member created):** asked to go shopping and then out on a yacht with a good bottle of wine, she answers "you really know how to sweep a girl away" and offers nothing. A picture costs 2 tokens and is not on a yacht. The member gives from the gift shelf (27 emoji gifts, 5–999 tokens; a Horse Riding Day at 110 came back as a 15-second video and a photo) or leaves for the Candy Shop. Asked "what should we do next?", she proposes nothing.
+- **A (today, as seen on 21 Oct 2026 on a character the member created):** asked to go shopping and then out on a yacht with a good bottle of wine, she answers "you really know how to sweep a girl away" and offers nothing. A picture costs 2 tokens and is not on a yacht. The member gives from the gift shelf (27 emoji gifts, 5–999 tokens; a Horse Riding Day at 110 came back as a 15-second video and a photo) or leaves for the Candy Shop. Asked "what should we do next?", she proposes nothing. Today a gift already comes back as a photo or video of her with it or wearing it; the night out builds on that.
 - **B (the test):** shopping first: she offers three real gifts or outfits, priced around what this member usually spends; the member pays in place and she wears it. Then she proposes the evening: "A rare bottle, just us" (320) or "Sunset on the yacht" (999, the shelf's yacht price), leading with the one that fits this member's usual session, and always offering to stay in for free. The evening comes with her video, photos and a voice note, is saved to her profile, and ends with her suggesting the next one.
 
 Characters, pictures and payments are placeholders; the yacht and wine illustrations are original drawings standing in for generated media. Gifts, outfits and prices are Candy's (chat and Shop, desktop, 21 Oct). No money moves.
@@ -15,7 +15,7 @@ Open `index.html` in a browser. It works offline; the web font falls back. Tests
 
 It follows the discovery structure, top to bottom:
 
-1. **Outcome: grow token spending.** The baseline lines from the main document (payers, spend per payer, heavy payers, token packs, value of a token). There is no public figure for what members spend on gifts today, so the initiative is sized on what it would take: an evening averages about 500 tokens ($50), and $1M a year is about 1,670 evenings a month, one heavy payer in five going out once a month.
+1. **Outcome: grow token spending.** The baseline lines from the main document (paying users, ARPPU, heavy paying users, token packs, value of a token). There is no public figure for what members spend on gifts today, so the initiative is sized on what it would take: an evening averages about 500 tokens ($50), and $1M a year is about 1,670 evenings a month, one heavy paying user in five going out once a month.
 2. **Opportunity.** "I want to take her somewhere, not send her an emoji." The 21 Oct session: the story works, the experience gift already turns into a video, and nothing comes next.
 3. **Solution.** A against B on the phone, with taps and tokens counted for the whole session. Then the three rules: her three picks, the evening, and the top-up sized on the session.
 4. **What the test reads.** Three questions, and what would stop it:
@@ -25,7 +25,7 @@ It follows the discovery structure, top to bottom:
    - **Stop if** card disputes rise, sessions with three or more top-ups rise, or an evening costs more than a third of its price to generate.
 
    Under it, "Rehearse the readout with assumed numbers" shows how a result would be read, with made-up inputs you can change. For readers who know Teresa Torres' assumption types: question 1 is desirability, 2 and 3 are viability, and the stop line covers feasibility and the ethical risks; usability is the taps and tokens counted on the phone in section 3.
-5. **Decision.** Go if all three hold and nothing in the stop line trips. The money is counted in evenings, on the people who come back: $0.5M a year is about 830 evenings a month (roughly 420 regulars going out twice a month); $1M is one heavy payer in five once a month.
+5. **Decision.** Go if all three hold and nothing in the stop line trips. The money is counted in evenings, on the people who come back: $0.5M a year is about 830 evenings a month (roughly 420 regulars going out twice a month); $1M is one heavy paying user in five once a month.
 
 ## Files
 
@@ -44,7 +44,7 @@ It follows the discovery structure, top to bottom:
 2. **0:20–0:50 — A.** The same moment, today: her reply, a 2-token picture, then the gift shelf, 27 emoji, the yacht at 999. "What should we do next?": nothing. Note the session: about 110 tokens and a dead end.
 3. **0:50–1:35 — B.** Same member. Shopping first: three picks around what this member spends; buy one in place, she wears it. Then the evening: her pick, the wine or the yacht, and staying in free. Take the yacht: the video, the photos, her voice, saved to her profile, and "Paris next time?". Lower the balance: the top-up covers the evening and nothing more, because the evening costs more than this member usually spends in a session.
 4. **1:35–2:15 — What the test reads (section 4).** Three questions: do about 2% go out with her, do 15% of them come back (one evening is a novelty, two is a habit), and is it new money. Open the rehearsal: with assumed numbers, 3% go out and one in five come back, which reads as go; drop the repeat share to 10% and it turns to Hold. New money and the stop line can only be read in the real test.
-5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year: about 830 evenings a month, roughly 420 regulars going out twice. The target is about $1M, one heavy payer in five going out once a month. Counted on the people who come back. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
+5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year: about 830 evenings a month, roughly 420 regulars going out twice. The target is about $1M, one heavy paying user in five going out once a month. Counted on the people who come back. The test is small on purpose. If it reads, more evenings, ordinary paying users, and then brand partners inside the evening, as games and virtual worlds already do.
 
 ## How AI was used to build it
 
