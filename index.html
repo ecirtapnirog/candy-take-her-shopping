@@ -301,7 +301,7 @@ td.d { text-align: right; font-family: var(--f-data); }
   }
   function tap() { if (counting) taps++; renderSession(); }
   function begin() { if (!counting && !finished) { counting = true; taps = 0; spent = 0; } }
-  function spend(n, what) { member.balance -= n; spent += n; log('tokens_spent', `${what} · −${n}`); renderSession(); }
+  function spend(n, what) { member.balance -= n; spent += n; log('tokens_spent', `${what} · −${n}`); renderSession(); renderStatus(); }
   function renderSession() { $('sesTok').textContent = `This session: ${fmt(spent)} tokens`; $('sesTaps').textContent = `${taps} taps`; }
 
   const hue = (id) => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
