@@ -51,7 +51,7 @@
     } else if (session <= 0) {
       reason = 'The smallest pack that covers this.';
     } else if (restOfSession === 0) {
-      reason = 'This costs more than a usual session for you, so nothing is added: the smallest pack that covers it.';
+      reason = 'This costs more than you usually spend in a session, so the pack covers this only, nothing extra.';
     } else if (pick === cheapestCovering) {
       reason = `Covers this and the rest of a usual session for you (about ${session} tokens).`;
     } else {

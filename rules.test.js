@@ -63,7 +63,7 @@ t('short on a 189-token outfit, usual session 300: covers the rest of the sessio
   assert.strictEqual(r.pick.tokens, 550);
   assert.ok(delivered(r.cheapestCovering) >= 169);
 });
-t('a dear evening is not padded: the yacht for a light member gets the cheapest pack that covers it', () => {
+t('an evening dearer than a usual session gets the cheapest pack that covers it, nothing extra', () => {
   const r = recommend({ cost: 999, balance: 96, sessionSpend: 120 });
   assert.strictEqual(r.pick, r.cheapestCovering);
 });

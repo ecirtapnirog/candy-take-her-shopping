@@ -30,7 +30,7 @@ It follows the discovery structure, top to bottom:
 ## Files
 
 - `shopping.js`: the gift shelf, the Shop catalogue, the two evenings, and two rules. Her three picks: one item at the member's usual price, one a step up, one cheaper, and at least one outfit while any are left. The evening: she leads with the one closest to the member's usual session, always shows the other, and always offers to stay in for free. The model writes her lines; these rules decide what she may offer.
-- `recommend.js`: the top-up rule, adapted from the AI-led prototype. It recommends the smallest pack covering the item plus the rest of a usual session (median of the last five), and always shows the cheapest pack that covers the item alone. A dear evening is not padded.
+- `recommend.js`: the top-up rule, adapted from the AI-led prototype. It recommends the smallest pack covering the item plus the rest of a usual session (median of the last five), and always shows the cheapest pack that covers the item alone. When an evening costs more than the member usually spends in a session, the pack covers that evening only, nothing extra.
 - `rules.test.js`: 6 cases for the picks, 3 for the evening, 5 for the top-up.
 - `index.html`: the phone (both variants), the console and the event log.
 
@@ -42,7 +42,7 @@ It follows the discovery structure, top to bottom:
 
 1. **0:00–0:20 — Outcome and opportunity (sections 1–2).** The goal is token spending. On my account this afternoon I asked my character to go shopping, then out on a yacht with a good bottle of wine. She loved it and offered nothing. A 110-token gift came back as a video of her riding by the water and a photo at sunset, so the media is there. Asked what next, she proposed nothing.
 2. **0:20–0:50 — A.** The same moment, today: her reply, a 2-token picture, then the gift shelf, 27 emoji, the yacht at 999. "What should we do next?": nothing. Note the session: about 110 tokens and a dead end.
-3. **0:50–1:35 — B.** Same member. Shopping first: three picks around what this member spends; buy one in place, she wears it. Then the evening: her pick, the wine or the yacht, and staying in free. Take the yacht: the video, the photos, her voice, saved to her profile, and "Paris next time?". Lower the balance: the top-up covers the evening and nothing more, because it is dearer than a usual session.
+3. **0:50–1:35 — B.** Same member. Shopping first: three picks around what this member spends; buy one in place, she wears it. Then the evening: her pick, the wine or the yacht, and staying in free. Take the yacht: the video, the photos, her voice, saved to her profile, and "Paris next time?". Lower the balance: the top-up covers the evening and nothing more, because the evening costs more than this member usually spends in a session.
 4. **1:35–2:15 — What the test reads (section 4).** Three questions: do they go, do they come back (bar 15%, because one evening is a novelty and two is a habit), and is it new money (bar +10 tokens a member a fortnight). Open the rehearsal: with assumed numbers, +19 tokens and one in five going out again reads as go; drop the repeat share to 10% and it turns to Hold. The rest of question 3 and the stop line can only be read in the real test.
 5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year; the target is about $1M, one heavy payer in five going out once a month. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
 
