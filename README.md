@@ -20,7 +20,7 @@ It follows the discovery structure, top to bottom:
 3. **Solution.** A against B on the phone, with taps and tokens counted for the whole session. Then the three rules: her three picks, the evening, and the top-up sized on the session.
 4. **What the test reads.** Three questions, and what would stop it:
    - **1 · Do they go?** Share of members who buy an evening within 14 days; bar about 2% (≈190 of 9,850), the pace of about 10,000 evenings a year across Premium Plus ($0.5M).
-   - **2 · Do they come back?** Share of evening-goers who go out again within 14 days; bar 15%. One evening is a novelty, two is a habit.
+   - **2 · Do they come back?** Share of evening-goers who book the next evening with her within 14 days (nothing charged until it happens), checked at 60 days; bar 15%. One evening is a novelty, two is a habit.
    - **3 · Is it new money?** No drop in pack revenue per member over 30 days, or in spending on everything else.
    - **Stop if** card disputes rise, sessions with three or more top-ups rise, or an evening costs more than a third of its price to generate.
 

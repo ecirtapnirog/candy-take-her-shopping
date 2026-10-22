@@ -243,7 +243,7 @@ td.d { text-align: right; font-family: var(--f-data); }
           <div class="row">
             <div class="field"><label for="sB">Share who buy while shopping with her</label><input id="sB" type="number" min="0" max="1" step="0.01" value="0.12"></div>
             <div class="field"><label for="eB">Of those, share who go on to an evening</label><input id="eB" type="number" min="0" max="1" step="0.01" value="0.30"></div>
-            <div class="field"><label for="rB">Of those, share who go out again within 14 days</label><input id="rB" type="number" min="0" max="1" step="0.01" value="0.20"></div>
+            <div class="field"><label for="rB">Of those, share who book the next evening within 14 days</label><input id="rB" type="number" min="0" max="1" step="0.01" value="0.20"></div>
           </div>
           <div class="tablewrap" style="margin-top:8px"><table id="abTable"></table></div>
           <div class="decision" id="decision"></div>
@@ -645,7 +645,7 @@ td.d { text-align: right; font-family: var(--f-data); }
   ['sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
   $('asTable').innerHTML = `<thead><tr><th>Question</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
     [['<b>1 · Do they go?</b>', '<b>Share of members who buy an evening within 14 days</b>', '<b>About 2%</b> (≈190 of 9,850): the pace of about 10,000 evenings a year across Premium Plus, $0.5M'],
-     ['<b>2 · Do they come back?</b>', '<b>Share of evening-goers who go out again within 14 days</b>', '<b>15% or more</b>'],
+     ['<b>2 · Do they come back?</b>', '<b>Share of evening-goers who book the next evening within 14 days (nothing charged until it happens), checked at 60 days</b>', '<b>15% or more</b>'],
      ['<b>3 · Is it new money?</b>', 'Pack revenue per member, 30 days; tokens on everything else', 'No drop; no drop'],
      ['Stop if', 'Card disputes and tickets about charges; sessions with three or more top-ups; generation cost per evening', 'Any rise; any rise; over a third of its price']]
       .map(([q, m, b]) => `<tr><td>${q}</td><td>${m}</td><td>${b}</td></tr>`).join('') + '</tbody>';
