@@ -254,8 +254,8 @@ td.d { text-align: right; font-family: var(--f-data); }
 
       <section class="card">
         <h2>5 · Decision</h2>
-        <p class="small" style="margin:0"><b>Go to Premium</b> if questions 2 and 3 hold and nothing in "Stop if" trips. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
-        <p class="small" style="margin:8px 0 0"><b>What it is worth.</b> At the bar, about $0.5M a year on Premium Plus, the bottom of the brief's range. The target is about $1M: one heavy payer in five going out once a month at ~$50. More evenings, ordinary payers and brand partners come after, sized only once this reads.</p>
+        <p class="small" style="margin:0"><b>Go to Premium</b> if questions 1, 2 and 3 hold and nothing in "Stop if" trips. <b>Otherwise hold</b>, and look at what members chose before changing anything.</p>
+        <p class="small" style="margin:8px 0 0"><b>What it is worth, in evenings.</b> An evening averages about $50. $0.5M a year is about 830 evenings a month: roughly 420 regulars going out twice a month, or 830 once. The target, $1M, is one heavy payer in five going out once a month. Counted on the people who come back, not on a two-week burst. More evenings, ordinary payers and brand partners come after, sized only once this reads.</p>
       </section>
 
       <section class="card">
@@ -621,7 +621,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
   // ---------- baseline, simulated test, decision ----------
   function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-  const PAYERS = 116000, HEAVY = 8100, PREMIUM_PLUS = 19700, FORTNIGHTS = 26, TOKEN_USD = 0.10, EVENING_USD = 50;
+  const PAYERS = 116000, HEAVY = 8100, PREMIUM_PLUS = 19700, TOKEN_USD = 0.10, EVENING_USD = 50;
   const gW = GIFTS.map(g => Math.pow(g.tokens, -0.6)), gWsum = gW.reduce((x, y) => x + y, 0);
   function drawGift(r) { let u = r() * gWsum; for (let i = 0; i < GIFTS.length; i++) { u -= gW[i]; if (u <= 0) return GIFTS[i]; } return GIFTS[GIFTS.length - 1]; }
 
@@ -664,30 +664,29 @@ td.d { text-align: right; font-family: var(--f-data); }
     const diff = B.mt - A.mt, se = Math.sqrt(A.vt / n + B.vt / n);
     const lift = diff / A.mt, lo = (diff - 1.96 * se) / A.mt, hi = (diff + 1.96 * se) / A.mt;
     const evBuyers = B.evenings - B.again, repeat = evBuyers ? B.again / evBuyers : 0;
-    const BAR = 10; const loAbs = diff - 1.96 * se; const pass = loAbs > 0 && diff >= BAR && repeat >= 0.15;
-    const yearly = Math.max(0, diff) * FORTNIGHTS * PREMIUM_PLUS * TOKEN_USD;
+    const goShare = evBuyers / n; const pass = goShare >= 0.02 && repeat >= 0.15;
 
     const sesA = last.A ? `${last.A.spent} tokens` : 'run A', sesB = last.B ? `${last.B.spent} tokens` : 'run B';
     const ok = (c) => c ? '<span class="good">holds</span>' : '<span class="warn">fails</span>';
     const srow = (l, a, b, v) => `<tr><td>${l}</td><td class="n">${a}</td><td class="n">${b}</td><td>${v}</td></tr>`;
     $('abTable').innerHTML = `<thead><tr><th>Assumed result, 14 days</th><th class="n">A · today</th><th class="n">B · our night out</th><th>Against the bar</th></tr></thead><tbody>` +
-      srow('Bought something', fmt(A.buyers), fmt(B.buyers), '') +
-      srow('1 · Went on to an evening', '–', fmt(evBuyers), '') +
-      srow('2 · Went out again', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}%)`, `${ok(repeat >= 0.15)} · bar 15%`) +
-      srow('<b>3 · Tokens per member</b>', A.mt.toFixed(1), B.mt.toFixed(1), `${ok(loAbs > 0 && diff >= BAR)} · +${diff.toFixed(1)} (${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}), bar +10`) +
+      srow('Bought something in the opening act (B) or from the shelf or Shop (A)', fmt(A.buyers), fmt(B.buyers), '') +
+      srow('<b>1 · Went out with her</b>', '–', `${fmt(evBuyers)} (${(goShare * 100).toFixed(1)}% of members)`, `${ok(goShare >= 0.02)} · bar about 2% (≈190)`) +
+      srow('<b>2 · Went out again</b>', '–', `${fmt(B.again)} (${(repeat * 100).toFixed(0)}% of those)`, `${ok(repeat >= 0.15)} · bar 15%`) +
+      srow('3 · New money', '–', '–', 'read in the real test: pack revenue, other spending') +
       srow('A session on the phone (your runs)', sesA, sesB, '') + '</tbody>';
-    $('inference').innerHTML = `<b>Reading it.</b> In B, ${(B.rate * 100).toFixed(1)}% bought in the opening act against ${(A.rate * 100).toFixed(1)}% buying from the shelf or Shop in A; ${fmt(evBuyers)} went on to an evening and ${fmt(B.again)} went out again. Tokens per member: <b>+${diff.toFixed(1)} a fortnight</b> (interval ${loAbs.toFixed(1)} to ${(diff + 1.96 * se).toFixed(1)}), on a small base of ${A.mt.toFixed(1)}, so read it in tokens, not percent; most of the gain is the evenings (${fmt(B.eveTok)} tokens) rather than the items. The repeat row is the one that matters for the money beyond the test: a single evening is a novelty, a second one is a habit. The "new money" row can only be read in the real test.`;
+    $('inference').innerHTML = `<b>Reading it.</b> In B, ${fmt(evBuyers)} of ${fmt(n)} members went out with her within 14 days (${(goShare * 100).toFixed(1)}%), and ${fmt(B.again)} of them went out again. The money is counted on the ones who come back, not on the two weeks: one evening is a novelty, two is a habit. Question 3, whether it is new money, can only be read in the real test.`;
 
     $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
     $('decision').innerHTML = pass
-      ? `<b class="good">With these numbers: go</b>, if the rest of question 3 and the stop line hold in the real test. B adds ${diff.toFixed(1)} tokens per member a fortnight, about ${usdM(yearly)} a year across Premium Plus.`
-      : (loAbs <= 0 ? `<b class="warn">Hold.</b> The interval reaches zero: the test cannot tell B from A.` : (repeat < 0.15 ? `<b class="warn">Hold.</b> Spend rose, but too few came back for a second evening: it reads as a novelty, not a habit.` : `<b class="warn">Hold.</b> B beats A, but by less than the bar of 10 tokens a member a fortnight.`));
+      ? `<b class="good">With these numbers: go</b>, if question 3 and the stop line hold in the real test. ${(goShare * 100).toFixed(1)}% went out (bar about 2%) and ${(repeat * 100).toFixed(0)}% of them came back (bar 15%).`
+      : (goShare < 0.02 ? `<b class="warn">Hold.</b> Too few went out: ${(goShare * 100).toFixed(1)}% against a bar of about 2%.` : `<b class="warn">Hold.</b> They went out, but too few came back for a second evening: it reads as a novelty, not a habit.`);
   }
   ['sA', 'kA', 'sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
   $('asTable').innerHTML = `<thead><tr><th>Question</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
-    [['1 · Do they go?', 'Share of opening-act buyers who go on to an evening', 'Up'],
+    [['<b>1 · Do they go?</b>', '<b>Share of members who buy an evening within 14 days</b>', '<b>About 2%</b> (≈190 of 9,850): the pace of 830 evenings a month across Premium Plus, $0.5M a year'],
      ['<b>2 · Do they come back?</b>', '<b>Share of evening-goers who go out again within 14 days</b>', '<b>15% or more</b>'],
-     ['<b>3 · Is it new money?</b>', '<b>Tokens per member on gifts, outfits and evenings, 14 days</b>; tokens on everything else; pack revenue per member, 30 days', '<b>+10 a fortnight</b> (≈$0.5M a year); no drop; no drop'],
+     ['<b>3 · Is it new money?</b>', 'Pack revenue per member, 30 days; tokens on everything else', 'No drop; no drop'],
      ['Stop if', 'Card disputes and tickets about charges; sessions with three or more top-ups; generation cost per evening', 'Any rise; any rise; over a third of its price']]
       .map(([q, m, b]) => `<tr><td>${q}</td><td>${m}</td><td>${b}</td></tr>`).join('') + '</tbody>';
 

@@ -19,13 +19,13 @@ It follows the discovery structure, top to bottom:
 2. **Opportunity.** "I want to take her somewhere, not send her an emoji." The 21 Oct session: the story works, the experience gift already turns into a video, and nothing comes next.
 3. **Solution.** A against B on the phone, with taps and tokens counted for the whole session. Then the three rules: her three picks, the evening, and the top-up sized on the session.
 4. **What the test reads.** Three questions, and what would stop it:
-   - **1 · Do they go?** Share of opening-act buyers who go on to an evening.
+   - **1 · Do they go?** Share of members who buy an evening within 14 days; bar about 2% (≈190 of 9,850), the pace of 830 evenings a month across Premium Plus.
    - **2 · Do they come back?** Share of evening-goers who go out again within 14 days; bar 15%. One evening is a novelty, two is a habit.
-   - **3 · Is it new money?** Tokens per member on gifts, outfits and evenings over 14 days (bar +10 a fortnight, about $0.5M a year on Premium Plus), with no drop in other spending or pack revenue.
+   - **3 · Is it new money?** No drop in pack revenue per member over 30 days, or in spending on everything else.
    - **Stop if** card disputes rise, sessions with three or more top-ups rise, or an evening costs more than a third of its price to generate.
 
    Under it, "Rehearse the readout with assumed numbers" shows how a result would be read, with made-up inputs you can change. For readers who know Teresa Torres' assumption types: question 1 is desirability, 2 and 3 are viability, and the stop line covers feasibility and the ethical risks; usability is the taps and tokens counted on the phone in section 3.
-5. **Decision.** Go if questions 2 and 3 hold and nothing in the stop line trips; about $0.5M at the bar, $1M at the target.
+5. **Decision.** Go if all three hold and nothing in the stop line trips. The money is counted in evenings, on the people who come back: $0.5M a year is about 830 evenings a month (roughly 420 regulars going out twice a month); $1M is one heavy payer in five once a month.
 
 ## Files
 
@@ -43,8 +43,8 @@ It follows the discovery structure, top to bottom:
 1. **0:00–0:20 — Outcome and opportunity (sections 1–2).** The goal is token spending. On my account this afternoon I asked my character to go shopping, then out on a yacht with a good bottle of wine. She loved it and offered nothing. A 110-token gift came back as a video of her riding by the water and a photo at sunset, so the media is there. Asked what next, she proposed nothing.
 2. **0:20–0:50 — A.** The same moment, today: her reply, a 2-token picture, then the gift shelf, 27 emoji, the yacht at 999. "What should we do next?": nothing. Note the session: about 110 tokens and a dead end.
 3. **0:50–1:35 — B.** Same member. Shopping first: three picks around what this member spends; buy one in place, she wears it. Then the evening: her pick, the wine or the yacht, and staying in free. Take the yacht: the video, the photos, her voice, saved to her profile, and "Paris next time?". Lower the balance: the top-up covers the evening and nothing more, because the evening costs more than this member usually spends in a session.
-4. **1:35–2:15 — What the test reads (section 4).** Three questions: do they go, do they come back (bar 15%, because one evening is a novelty and two is a habit), and is it new money (bar +10 tokens a member a fortnight). Open the rehearsal: with assumed numbers, +19 tokens and one in five going out again reads as go; drop the repeat share to 10% and it turns to Hold. The rest of question 3 and the stop line can only be read in the real test.
-5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year; the target is about $1M, one heavy payer in five going out once a month. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
+4. **1:35–2:15 — What the test reads (section 4).** Three questions: do about 2% go out with her, do 15% of them come back (one evening is a novelty, two is a habit), and is it new money. Open the rehearsal: with assumed numbers, 3% go out and one in five come back, which reads as go; drop the repeat share to 10% and it turns to Hold. New money and the stop line can only be read in the real test.
+5. **2:15–2:40 — Decision and the path (section 5).** At the bar, about $0.5M a year: about 830 evenings a month, roughly 420 regulars going out twice. The target is about $1M, one heavy payer in five going out once a month. Counted on the people who come back. The test is small on purpose. If it reads, more evenings, ordinary payers, and then brand partners inside the evening, as games and virtual worlds already do.
 
 ## How AI was used to build it
 
