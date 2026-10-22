@@ -308,7 +308,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
   function renderStatus() {
     const names = { 4: 'Playful', 5: 'Teasing', 6: 'Close', 7: 'In love', 8: 'Devoted' };
-    $('status').textContent = `${names[her.level] || 'In love'} · level ${her.level}`;
+    $('status').textContent = `${names[her.level] || 'In love'} · level ${her.level} · ${variant === 'A' ? 'A · today' : 'B · our night out'}`;
     $('bal').textContent = fmt(member.balance);
   }
 
@@ -348,6 +348,7 @@ td.d { text-align: right; font-family: var(--f-data); }
       if (variant === 'A' && chosen && chosen.kind === 'outfit' && her.owned.includes(chosen.id) && her.wearing !== chosen.id) chips.push(`<button class="chip hot" id="cWear">Ask her to wear it</button>`);
       if (variant === 'A' && phase === 'gave') chips.push(`<button class="chip hot" id="cNext">That was perfect. What should we do next?</button>`);
       if (variant === 'B' && phase === 'next') chips.push(`<button class="chip hot" id="cAgain">Yes, next time</button>`, `<button class="chip" id="cLater">Maybe later</button>`);
+      if (finished) chips.push(variant === 'A' ? `<button class="chip hot" id="cToB">Now see B: our night out →</button>` : `<button class="chip" id="cToA">Compare with A: today</button>`);
       chips.push(`<button class="giftbtn" id="cGift">Gifts</button>`);
     }
     $('composer').innerHTML = chips.join('') + `<div class="input">Write a message…</div>`;
@@ -357,6 +358,8 @@ td.d { text-align: right; font-family: var(--f-data); }
     if ($('cNext')) $('cNext').onclick = askNext;
     if ($('cAgain')) $('cAgain').onclick = () => { tap(); log('next_evening_accepted', 'repeat intent'); msgs.push({ k: 'me', t: 'Yes, next time' }, { k: 'her', t: "it's a plan. I'll remind you 😘" }); phase = 'done'; renderChat(); done('a night out, and the next one planned'); };
     if ($('cLater')) $('cLater').onclick = () => { tap(); log('next_evening_declined'); msgs.push({ k: 'me', t: 'Maybe later' }, { k: 'her', t: 'no rush. tonight was perfect' }); phase = 'done'; renderChat(); done('a night out'); };
+    if ($('cToB')) $('cToB').onclick = () => setVariant('B');
+    if ($('cToA')) $('cToA').onclick = () => setVariant('A');
     if ($('cGift')) $('cGift').onclick = () => { begin(); tap(); log('gift_shelf_opened'); giftShelf(); };
   }
   function go(s) { screen = s; $('overlay').innerHTML = ''; if (s === 'chat') renderChat(); if (s === 'shop') renderShop(); if (s === 'item') renderItem(); if (s === 'store') renderStore(); renderStatus(); if (s !== 'chat') renderComposer(); }
@@ -384,7 +387,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     counting = false; finished = true; last[variant] = { taps, route, spent };
     log('session_done', `${taps} taps · ${spent} tokens · ${route}`);
     $('tapNote').textContent = `Done: ${taps} taps, ${spent} tokens this session, ${route}. Switch variant to compare, or reset to run it again.`;
-    renderCompare();
+    renderCompare(); if (screen === 'chat') renderComposer();
   }
 
   // ---------- B: the opening act ----------
@@ -601,7 +604,7 @@ td.d { text-align: right; font-family: var(--f-data); }
 
   function setVariant(v) {
     variant = v; $('vA').setAttribute('aria-pressed', v === 'A'); $('vB').setAttribute('aria-pressed', v === 'B');
-    resetAll(false); log('variant_set', v === 'A' ? 'today' : 'our night out');
+    resetAll(false); renderStatus(); log('variant_set', v === 'A' ? 'today' : 'our night out');
   }
   function resetAll(withLog = true) {
     member = start(); her = { owned: [], wearing: null, level: 4 }; counting = false; finished = false; taps = 0; spent = 0; chosen = null; offer = null; evening = null; phase = 'idle'; route = '';
