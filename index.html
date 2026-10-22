@@ -645,7 +645,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
     $('decision').innerHTML = pass
       ? '<b class="good">Overall: Go</b> · 1 and 2 pass; 3 and the stop line are read in the real test.'
-      : `<b class="warn">Overall: Not yet</b> · ${!p1 ? 'too few go out' : 'they go once but too few come back'}. Change the evening and test again.`;
+      : `<b class="warn">Overall: Not yet</b> · ` + [!p1 && 'For 1: change what she proposes and when (the evening, its price, the moment she asks).', !p2 && 'For 2: make the next evening easier to say yes to (what she suggests next, and her reminder).'].filter(Boolean).join(' ') + ' Then test again.';
   }
   ['sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
   $('asTable').innerHTML = `<thead><tr><th>Question</th><th>Measured by</th><th>Bar</th></tr></thead><tbody>` +
