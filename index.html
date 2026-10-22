@@ -250,11 +250,6 @@ td.d { text-align: right; font-family: var(--f-data); }
         </details>
       </section>
 
-      <section class="card">
-        <h2>5 · Decision</h2>
-        <p class="small" style="margin:0"><b>Go:</b> questions 1, 2 and 3 pass and nothing in "Stop if" trips; extend to Premium. <b>Not yet:</b> any question fails; look at what members chose, change the evening and test again.</p>
-        <p class="small" style="margin:8px 0 0"><b>What it is worth, in evenings.</b> An evening averages about $50. $0.5M a year is about 830 evenings a month: roughly 420 regulars going out twice a month, or 830 once. The target, $1M, is one heavy paying user in five going out once a month. Counted on the people who come back, not on a two-week burst. More evenings, ordinary paying users and brand partners come after, sized only once this reads.</p>
-      </section>
 
       <section class="card">
         <h2>Events this session</h2>
@@ -627,7 +622,7 @@ td.d { text-align: right; font-family: var(--f-data); }
     [['B4', 'Paying users', '~1% of 11.6M monthly visitors', '~116,000'], ['B5', 'ARPPU (all revenue per paying user)', '$20–25M ÷ 12 ÷ 116,000', '$14–18 a month, subscription and packs'], ['B6', 'Heavy paying users', '7% of paying users bring 25% of revenue (RevenueCat)', '~8,100 at $51–64 a month'], ['B8', 'Token packs, the new money', '$20–25M − subscriptions', '$7–12M a year; ≈ $5–9 per paying user a month'], ['B9', 'Value of a token', '9.99 per 100 tokens', '$0.10']]
       .map(([k, l, c, r]) => `<tr><td>${k}</td><td>${l}</td><td>${c}</td><td class="n">${r}</td></tr>`).join('') + '</tbody>';
   $('needTable').innerHTML = `<thead><tr><th class="n">A year</th><th class="n">Evenings a month</th><th>Which is</th></tr></thead><tbody>` +
-    [[0.5e6, 'one heavy paying user in ten, once a month'], [1e6, '<b>one heavy paying user in five, once a month (the first step)</b>'], [3e6, 'more than half of heavy paying users monthly, or ordinary paying users too: the direction, not the first step']]
+    [[0.5e6, 'one heavy paying user in ten, once a month, or about 420 regulars going out twice: the bar the test reads (section 4)'], [1e6, '<b>one heavy paying user in five, once a month (the first step)</b>'], [3e6, 'more than half of heavy paying users monthly, or ordinary paying users too: the direction, not the first step']]
       .map(([v, w]) => `<tr><td class="n">${usdM(v)}</td><td class="n">${fmt(v / EVENING_USD / 12)}</td><td>${w}</td></tr>`).join('') + '</tbody>';
 
   function simulate() {
@@ -644,7 +639,7 @@ td.d { text-align: right; font-family: var(--f-data); }
       srow('<b>3 · Is it new money?</b>', '–', 'no drop in packs or other spending', '<span style="color:var(--muted)">Read in the real test</span>') + '</tbody>';
     $('decision').style.background = pass ? 'color-mix(in srgb, var(--good) 12%, transparent)' : 'color-mix(in srgb, var(--warn) 12%, transparent)';
     $('decision').innerHTML = pass
-      ? '<b class="good">Overall: Go</b> · 1 and 2 pass; 3 and the stop line are read in the real test.'
+      ? '<b class="good">Overall: Go</b> · extend to Premium, if 3 and the stop line also hold in the real test.'
       : `<b class="warn">Overall: Not yet</b> · ` + [!p1 && 'For 1: change what she proposes and when (the evening, its price, the moment she asks).', !p2 && 'For 2: make the next evening easier to say yes to (what she suggests next, and her reminder).'].filter(Boolean).join(' ') + ' Then test again.';
   }
   ['sB', 'eB', 'rB'].forEach(id => $(id).addEventListener('input', simulate));
